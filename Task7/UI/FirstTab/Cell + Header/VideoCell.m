@@ -10,6 +10,11 @@
 
 @interface VideoCell ()
 
+@property (nonatomic, strong) UIImageView *videoImage;
+@property (nonatomic, strong) UILabel *videoDuration;
+@property (nonatomic, strong) UILabel *speakerLabel;
+@property (nonatomic, strong) UILabel *speachTitleLabel;
+
 @end
 
 @implementation VideoCell
@@ -29,6 +34,32 @@
         [self setupViews];
     }
     return self;
+}
+
+
+-(void)initWithItem:(VideoItem *)item; {
+    _videoImage.image = item.image;
+    _speakerLabel.text = item.videoSpeaker;
+    _speachTitleLabel.text = [self getSubstring:item.videoTitle];
+    _videoDuration.text = [self getDuration:[NSMutableString stringWithString:item.videoDuration]]; ;
+}
+
+- (NSString *)getDuration:(NSMutableString *)duration {
+    NSMutableString *newDuration = duration;
+        NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
+    if ([substring isEqualToString:@"00:"]) {
+        [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];
+    }
+    return newDuration;
+}
+
+- (NSString *)getSubstring:(NSString *)string {
+    NSRange range = [string rangeOfString:@" |"];
+    if(range.location != NSNotFound) {
+        NSString *result = [string substringWithRange:NSMakeRange(0, range.location)];
+        return result;
+    }
+    return @"";
 }
 
 - (void)setupViews {
@@ -74,7 +105,7 @@
     self.speachTitleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
     self.speachTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
-    self.speachTitleLabel.text = @"My favourite author calling blasldalsdlasldalsdasdasdasdasdasdasdhjksdkhfbsldjfgosdljfljsdgfljbsdljfbsdljfsljdbfljsdbfljsdbfljsdbfljsdblfdfsbljfb";
+    self.speachTitleLabel.text = @"";
     self.speachTitleLabel.textAlignment = NSTextAlignmentLeft;
     self.speachTitleLabel.numberOfLines = 3;
     self.speachTitleLabel.textColor = UIColor.blackColor;
@@ -96,13 +127,12 @@
     self.videoDuration.textAlignment = NSTextAlignmentCenter;
     self.videoDuration.textColor = UIColor.whiteColor;
     self.videoDuration.backgroundColor = UIColor.blackColor;
-    self.videoDuration.alpha = 0.7;
+    self.videoDuration.alpha = 0.8;
     
     [NSLayoutConstraint activateConstraints:@[
     
         [self.videoDuration.bottomAnchor constraintEqualToAnchor:self.videoImage.bottomAnchor constant:-5],
         [self.videoDuration.trailingAnchor constraintEqualToAnchor:self.videoImage.trailingAnchor constant:-5],
-        [self.videoDuration.widthAnchor constraintEqualToConstant:50],
         [self.videoDuration.heightAnchor constraintEqualToConstant:20],
 
     ]];

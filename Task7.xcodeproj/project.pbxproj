@@ -19,6 +19,10 @@
 		063F058624C0FFB100C8A6B7 /* SecondTabVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F058524C0FFB100C8A6B7 /* SecondTabVC.m */; };
 		063F058A24C1AB9F00C8A6B7 /* VideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F058924C1AB9F00C8A6B7 /* VideoCell.m */; };
 		063F058D24C1B60100C8A6B7 /* HeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F058C24C1B60100C8A6B7 /* HeaderView.m */; };
+		063F059224C2F4E400C8A6B7 /* VideoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059124C2F4E400C8A6B7 /* VideoItem.m */; };
+		063F059624C2FC3A00C8A6B7 /* VideoService.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059524C2FC3A00C8A6B7 /* VideoService.m */; };
+		063F05A024C2FE5F00C8A6B7 /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059F24C2FE5F00C8A6B7 /* XMLParser.m */; };
+		063F05A324C33D8B00C8A6B7 /* DownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +59,15 @@
 		063F058924C1AB9F00C8A6B7 /* VideoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoCell.m; sourceTree = "<group>"; };
 		063F058B24C1B60100C8A6B7 /* HeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeaderView.h; sourceTree = "<group>"; };
 		063F058C24C1B60100C8A6B7 /* HeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeaderView.m; sourceTree = "<group>"; };
+		063F059024C2F4E400C8A6B7 /* VideoItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoItem.h; sourceTree = "<group>"; };
+		063F059124C2F4E400C8A6B7 /* VideoItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoItem.m; sourceTree = "<group>"; };
+		063F059424C2FC3A00C8A6B7 /* VideoService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoService.h; sourceTree = "<group>"; };
+		063F059524C2FC3A00C8A6B7 /* VideoService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoService.m; sourceTree = "<group>"; };
+		063F059D24C2FDEB00C8A6B7 /* ParserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserProtocol.h; sourceTree = "<group>"; };
+		063F059E24C2FE5F00C8A6B7 /* XMLParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XMLParser.h; sourceTree = "<group>"; };
+		063F059F24C2FE5F00C8A6B7 /* XMLParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLParser.m; sourceTree = "<group>"; };
+		063F05A124C33D8B00C8A6B7 /* DownloadOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadOperation.h; sourceTree = "<group>"; };
+		063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadOperation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,18 +109,15 @@
 		063F04D224C0F6DD00C8A6B7 /* Task7 */ = {
 			isa = PBXGroup;
 			children = (
-				063F04D324C0F6DD00C8A6B7 /* AppDelegate.h */,
-				063F04D424C0F6DD00C8A6B7 /* AppDelegate.m */,
-				063F04D624C0F6DD00C8A6B7 /* SceneDelegate.h */,
-				063F04D724C0F6DD00C8A6B7 /* SceneDelegate.m */,
-				063F057F24C0FE6600C8A6B7 /* MainTabBarController */,
-				063F058324C0FF9C00C8A6B7 /* FirstTab */,
-				063F058724C0FFB600C8A6B7 /* SecondTab */,
-				063F04E224C0F6DD00C8A6B7 /* Assets.xcassets */,
-				063F04E424C0F6DD00C8A6B7 /* LaunchScreen.storyboard */,
-				063F04E724C0F6DD00C8A6B7 /* Info.plist */,
-				063F04E824C0F6DD00C8A6B7 /* main.m */,
+				063F059824C2FCEA00C8A6B7 /* Support */,
+				063F058F24C1F66400C8A6B7 /* UI */,
+				063F059324C2F4EC00C8A6B7 /* Model */,
+				063F059724C2FC4200C8A6B7 /* Services */,
+				063F059924C2FD9800C8A6B7 /* Parsers */,
 				063F04DF24C0F6DD00C8A6B7 /* Task7.xcdatamodeld */,
+				063F04E424C0F6DD00C8A6B7 /* LaunchScreen.storyboard */,
+				063F04E224C0F6DD00C8A6B7 /* Assets.xcassets */,
+				063F04E724C0F6DD00C8A6B7 /* Info.plist */,
 			);
 			path = Task7;
 			sourceTree = "<group>";
@@ -158,6 +168,58 @@
 				063F058924C1AB9F00C8A6B7 /* VideoCell.m */,
 			);
 			path = "Cell + Header";
+			sourceTree = "<group>";
+		};
+		063F058F24C1F66400C8A6B7 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				063F057F24C0FE6600C8A6B7 /* MainTabBarController */,
+				063F058324C0FF9C00C8A6B7 /* FirstTab */,
+				063F058724C0FFB600C8A6B7 /* SecondTab */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		063F059324C2F4EC00C8A6B7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				063F059024C2F4E400C8A6B7 /* VideoItem.h */,
+				063F059124C2F4E400C8A6B7 /* VideoItem.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		063F059724C2FC4200C8A6B7 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				063F059424C2FC3A00C8A6B7 /* VideoService.h */,
+				063F059524C2FC3A00C8A6B7 /* VideoService.m */,
+				063F05A124C33D8B00C8A6B7 /* DownloadOperation.h */,
+				063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		063F059824C2FCEA00C8A6B7 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				063F04D324C0F6DD00C8A6B7 /* AppDelegate.h */,
+				063F04D424C0F6DD00C8A6B7 /* AppDelegate.m */,
+				063F04D624C0F6DD00C8A6B7 /* SceneDelegate.h */,
+				063F04D724C0F6DD00C8A6B7 /* SceneDelegate.m */,
+				063F04E824C0F6DD00C8A6B7 /* main.m */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		063F059924C2FD9800C8A6B7 /* Parsers */ = {
+			isa = PBXGroup;
+			children = (
+				063F059D24C2FDEB00C8A6B7 /* ParserProtocol.h */,
+				063F059E24C2FE5F00C8A6B7 /* XMLParser.h */,
+				063F059F24C2FE5F00C8A6B7 /* XMLParser.m */,
+			);
+			name = Parsers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,10 +323,14 @@
 			files = (
 				063F04E924C0F6DD00C8A6B7 /* main.m in Sources */,
 				063F058D24C1B60100C8A6B7 /* HeaderView.m in Sources */,
+				063F059624C2FC3A00C8A6B7 /* VideoService.m in Sources */,
+				063F05A324C33D8B00C8A6B7 /* DownloadOperation.m in Sources */,
 				063F04E124C0F6DD00C8A6B7 /* Task7.xcdatamodeld in Sources */,
+				063F05A024C2FE5F00C8A6B7 /* XMLParser.m in Sources */,
 				063F04D524C0F6DD00C8A6B7 /* AppDelegate.m in Sources */,
 				063F058624C0FFB100C8A6B7 /* SecondTabVC.m in Sources */,
 				063F057E24C0FE6100C8A6B7 /* MainController.m in Sources */,
+				063F059224C2F4E400C8A6B7 /* VideoItem.m in Sources */,
 				063F058A24C1AB9F00C8A6B7 /* VideoCell.m in Sources */,
 				063F058224C0FF9300C8A6B7 /* FirstTabVC.m in Sources */,
 				063F04D824C0F6DD00C8A6B7 /* SceneDelegate.m in Sources */,

@@ -9,11 +9,16 @@
 #import "FirstTabVC.h"
 #import "VideoCell.h"
 #import "HeaderView.h"
+#import "VideoService.h"
+#import "VideoItem.h"
+#import "XMLParser.h"
 
 @interface FirstTabVC ()
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
+@property (nonatomic, strong) VideoService *videoService;
+@property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
 
 @end
 
@@ -21,9 +26,30 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
- 
-    [self setupCollectionView];
     
+    self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
+    self.dataSource = [NSArray new];
+    
+    [self setupCollectionView];
+    [self startLoading];
+}
+
+- (void)startLoading {
+    __weak typeof (self) weakSelf = self;
+    [self.videoService loadVideo:^(NSArray<VideoItem *> *video, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (error) {
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                         message:[NSString stringWithFormat:@"%@", error]
+                                                                                  preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                [weakSelf presentViewController:alertController animated:YES completion:nil];
+            } else {
+                weakSelf.dataSource = video;
+                [weakSelf.collectionView reloadData];
+            }
+        });
+    }];
 }
 
 - (void)setupCollectionView {
@@ -64,11 +90,28 @@
     [self.flowLayout setSectionInset:UIEdgeInsetsMake(30, 0, 0, 0)];
 }
 
+- (void)loadImageForIndexPath:(NSIndexPath *)indexPath {
+    __weak typeof(self) weakSelf = self;
+    VideoItem *item = self.dataSource[indexPath.item];
+    [self.videoService loadImageForURL:item.videoImageURL completion:^(UIImage *image) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.dataSource[indexPath.item].image = image;
+            [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        });
+    }];
+}
+
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     VideoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
-    cell.backgroundColor = [UIColor yellowColor];
     
+    VideoItem *item = self.dataSource[indexPath.item];
+    
+    if (!item.image) {
+        [self loadImageForIndexPath:indexPath];
+    }
+    
+    [cell initWithItem:item];
     return cell;
 }
 
@@ -88,7 +131,7 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return 5;
+    return self.dataSource.count;
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {

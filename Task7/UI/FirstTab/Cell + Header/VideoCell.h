@@ -7,16 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VideoItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoCell : UICollectionViewCell
 
-@property (nonatomic, strong) UIImageView *videoImage;
-@property (nonatomic, strong) UILabel *videoDuration;
-@property (nonatomic, strong) UILabel *speakerLabel;
-@property (nonatomic, strong) UILabel *speachTitleLabel;
-
+-(void)initWithItem:(VideoItem *)item;
 @end
 
 NS_ASSUME_NONNULL_END
