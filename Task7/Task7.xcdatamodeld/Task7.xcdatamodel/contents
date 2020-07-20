@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="Video" representedClassName="Video" syncable="YES">
+        <attribute name="videoDescription" optional="YES" attributeType="String"/>
+        <attribute name="videoDuration" optional="YES" attributeType="String"/>
+        <attribute name="videoImage" optional="YES" attributeType="Binary"/>
+        <attribute name="videoImageURL" optional="YES" attributeType="String"/>
+        <attribute name="videoLink" optional="YES" attributeType="String"/>
+        <attribute name="videoSpeaker" optional="YES" attributeType="String"/>
+        <attribute name="videoStreamLink" optional="YES" attributeType="String"/>
+        <attribute name="videoTitle" optional="YES" attributeType="String"/>
+    </entity>
+    <fetchRequest name="FetchRequest" entity="Video" predicateString="TRUEPREDICATE"/>
+    <elements>
+        <element name="Video" positionX="-63" positionY="-18" width="128" height="163"/>
+    </elements>
 </model>

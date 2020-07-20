@@ -7,6 +7,7 @@
 //
 
 #import "VideoCell.h"
+#import "Video+CoreDataProperties.h"
 
 @interface VideoCell ()
 
@@ -36,6 +37,13 @@
     return self;
 }
 
+-(void)initWithCoreItem:(Video *)item; {
+    _videoImage.image = [UIImage imageWithData:item.videoImage];
+    _speakerLabel.text = item.videoSpeaker;
+    _speachTitleLabel.text = [self getSubstring:item.videoTitle];
+    _videoDuration.text = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
+    
+}
 
 -(void)initWithItem:(VideoItem *)item; {
     _videoImage.image = item.image;
@@ -59,7 +67,7 @@
         NSString *result = [string substringWithRange:NSMakeRange(0, range.location)];
         return result;
     }
-    return @"";
+    return string;
 }
 
 - (void)setupViews {

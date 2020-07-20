@@ -11,6 +11,9 @@
 #import "XMLParser.h"
 #import "AVKit/AVKit.h"
 #import "AVFoundation/AVFoundation.h"
+#import "AppDelegate.h"
+#import "Video+CoreDataProperties.h"
+
 @interface VideoInfoVC ()
 
 
@@ -34,23 +37,220 @@
 @property (nonatomic, strong) NSString *speachSpeaker;
 @property (nonatomic, strong) NSString *speachDescription;
 @property (nonatomic, strong) UIImage *videoImage;
+@property (nonatomic, strong) NSString *videoImageURL;
+@property (nonatomic, strong) NSString *videoStreamLink;
+@property (nonatomic, strong) NSString *videoLink;
 @property (nonatomic, strong) NSString *duration;
+@property (nonatomic, strong) NSIndexPath *indexPath;
 
 @property (nonatomic, strong) VideoService *videoService;
-@property (nonatomic, copy) VideoItem *videoItem;
+
+
+//@property (nonatomic, copy) VideoItem *videoItem;
+//@property (nonatomic, copy) Video *coreItem;
+
+
 @property (nonatomic, weak) NSLayoutConstraint *videoImageConstraintPortrait;
 @property (nonatomic, weak) NSLayoutConstraint *videoImageConstraintLandscape;
 
-@property (nonatomic) BOOL isPressed;
+@property (nonatomic) BOOL isLiked;
+@property (nonatomic, strong) NSMutableArray <Video *> *coreVideoItems;
 
 @end
 
 @implementation VideoInfoVC
 
+- (NSManagedObjectContext *)viewContext {
+    return ((AppDelegate *)UIApplication.sharedApplication.delegate).persistentContainer.viewContext;
+}
+- (NSManagedObjectContext *)newBackgroundContext {
+    return ((AppDelegate *)UIApplication.sharedApplication.delegate).persistentContainer.newBackgroundContext ;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = UIColor.whiteColor;
+    self.coreVideoItems = [self fetchVideoItems];
+    
+    for (Video *item in self.coreVideoItems) {
+        if ([item.videoLink isEqualToString:self.videoLink]) {
+            self.isLiked = YES;
+        }
+    }
+    
     [self setupViews];
+    
+}
+
+- (void)showVideo {
+    NSURL *url = [NSURL URLWithString:self.videoStreamLink];
+    if (url){
+        AVPlayer *player = [[AVPlayer alloc]initWithURL:url];
+        AVPlayerViewController *playerViewController = [AVPlayerViewController new];
+        playerViewController.player = player;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:playerViewController animated:YES completion:^{
+                [playerViewController.player play];
+            }];
+        });
+    }
+}
+
+- (void)likeVideo {
+    if (!self.isLiked) {
+        [self.likeButton setImage:[UIImage imageNamed: @"like_selected"] forState:UIControlStateNormal];
+        self.isLiked = YES;
+
+        NSManagedObjectContext *context = [self viewContext];
+        
+        __weak typeof (self) weakSelf = self;
+        __block Video *video;
+        
+        [context performBlockAndWait:^{
+            video = [[Video alloc]initWithContext:context];
+            video.videoTitle = weakSelf.speachTitle;
+            video.videoImage = UIImagePNGRepresentation(weakSelf.videoImage);
+            video.videoLink = weakSelf.videoLink;
+            video.videoSpeaker = weakSelf.speachSpeaker;
+            video.videoDuration = weakSelf.duration;
+            video.videoImageURL = weakSelf.videoImageURL;
+            video.videoStreamLink = weakSelf.videoStreamLink;
+            video.videoDescription = weakSelf.speachDescription;
+        }];
+        [context save:nil];
+        
+        self.coreVideoItems = [self fetchVideoItems];
+        
+    } else {
+        self.isLiked = NO;
+        [self.likeButton setImage:[UIImage imageNamed: @"like_unselected"] forState:UIControlStateNormal];
+        
+        NSManagedObjectContext *context = [self viewContext];
+        
+        if (self.indexPath) {
+            Video *video  = [self.coreVideoItems objectAtIndex:self.indexPath.row];
+            [context performBlockAndWait:^{
+                [context deleteObject:video];
+            }];
+            [context save:nil];
+            
+            self.coreVideoItems = [self fetchVideoItems];
+        } else {
+            Video *video  = self.coreVideoItems.lastObject;
+            [context performBlockAndWait:^{
+                [context deleteObject:video];
+            }];
+            [context save:nil];
+            
+            self.coreVideoItems = [self fetchVideoItems];
+        }
+    }
+}
+
+- (NSMutableArray <Video *>*)fetchVideoItems {
+    NSManagedObjectContext *context = [self viewContext];
+    NSFetchRequest *fetchRequest = [Video fetchRequest];
+    
+    return [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+}
+
+-(void)initWithItem:(VideoItem *)item {
+    //    _videoItem = item;
+    _videoStreamLink = item.videoStreamLink;
+    _videoImageURL = item.videoImageURL;
+    _videoLink = item.videoLink;
+    _videoImage = item.image;
+    _speachSpeaker = item.videoSpeaker;
+    _speachTitle = [self getSubstring:item.videoTitle];
+    _speachDescription = item.videoDescription;
+    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
+}
+
+-(void)initWithCoreItem:(Video *)item at:(NSIndexPath *)indexPath {
+    _videoStreamLink = item.videoStreamLink;
+    _videoImageURL = item.videoImageURL;
+    _videoLink = item.videoLink;
+    _videoImage = [UIImage imageWithData:item.videoImage];
+    _speachSpeaker = item.videoSpeaker;
+    _speachTitle = item.videoTitle;
+    _speachDescription = item.videoDescription;
+    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
+    _isLiked = YES;
+    _indexPath = indexPath;
+}
+
+- (void)shareVideo {
+    NSMutableArray *activityItems= [NSMutableArray arrayWithObjects:self.videoLink, nil];
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    activityViewController.excludedActivityTypes = @[UIActivityTypePostToWeibo, UIActivityTypePrint, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr, UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo, UIActivityTypeAirDrop];
+    
+    if (@available (iOS 13,*)) {
+        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            [self presentViewController:activityViewController animated:YES completion:nil];
+        } else {
+            activityViewController.modalPresentationStyle = UIModalPresentationPopover;
+            activityViewController.popoverPresentationController.sourceView = self.shareButton;
+            [self presentViewController:activityViewController animated:YES completion:nil];
+        }
+    } else {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            [self presentViewController:activityViewController animated:YES completion:nil];
+        } else {
+            activityViewController.modalPresentationStyle = UIModalPresentationPopover;
+            activityViewController.popoverPresentationController.sourceView = self.shareButton;
+            [self presentViewController:activityViewController animated:YES completion:nil];
+        }
+    }
+}
+
+- (NSString *)getDuration:(NSMutableString *)duration {
+    NSMutableString *newDuration = duration;
+    NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
+    if ([substring isEqualToString:@"00:"]) {
+        [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];
+    }
+    return newDuration;
+}
+
+- (NSString *)getSubstring:(NSString *)string {
+    NSRange range = [string rangeOfString:@" |"];
+    if(range.location != NSNotFound) {
+        NSString *result = [string substringWithRange:NSMakeRange(0, range.location)];
+        return result;
+    }
+    return @"";
+}
+
+- (void)loadImageForURL:(NSString *)url {
+    
+    __weak typeof(self) weakSelf = self;
+    self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
+    [self.videoService loadImageForURL:url completion:^(UIImage *image) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.videoImage = image;
+            weakSelf.videoImageView.image = weakSelf.videoImage;
+            [weakSelf.playVideoButton setHidden:NO];
+            [weakSelf.durationLabel setHidden:NO];
+            
+            [weakSelf setImageViewHeightConstraint];
+            
+            [weakSelf.videoImageView setNeedsDisplay];
+            [weakSelf.videoImageView setNeedsLayout];
+        });
+    }];
+}
+
+- (void)setImageViewHeightConstraint {
+    CGFloat coef = self.videoImage.size.height/self.videoImage.size.width;
+    if (self.view.bounds.size.height > self.view.bounds.size.width) {
+        self.videoImageConstraintPortrait = [NSLayoutConstraint constraintWithItem:self.videoImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0.0];
+        self.videoImageConstraintPortrait.constant = self.view.frame.size.width * coef;
+        [self.videoImageView addConstraint:self.videoImageConstraintPortrait];
+    } else {
+        self.videoImageConstraintLandscape = [NSLayoutConstraint constraintWithItem:self.videoImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:self.view.frame.size.height * coef];
+        [self.videoImageView addConstraint:self.videoImageConstraintLandscape];
+    }
 }
 
 - (void)setupViews {
@@ -136,9 +336,9 @@
     } else {
         [self.playVideoButton setHidden:YES];
         [self.durationLabel setHidden:YES];
-        [self loadImageForItem:self.videoItem];
+        [self loadImageForURL:self.videoImageURL];
     }
-
+    
     
     [self.scrollContentView addSubview:self.videoImageView];
     
@@ -200,7 +400,12 @@
     
     //    Like button
     self.likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.likeButton setImage:[UIImage imageNamed:@"like_unselected"] forState:UIControlStateNormal];
+    if (self.isLiked) {
+        [self.likeButton setImage:[UIImage imageNamed:@"like_selected"] forState:UIControlStateNormal];
+    } else {
+        [self.likeButton setImage:[UIImage imageNamed:@"like_unselected"] forState:UIControlStateNormal];
+    }
+    
     self.likeButton.backgroundColor = [UIColor whiteColor];
     
     [self.likeButton addTarget:self action:@selector(likeVideo) forControlEvents:UIControlEventTouchUpInside];
@@ -329,118 +534,5 @@
         [self.mainStackView.bottomAnchor constraintEqualToAnchor:self.scrollContentView.bottomAnchor constant:-15],
         [self.mainStackView.widthAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.widthAnchor constant: - 30],
     ]];
-}
-
-- (void)showVideo {
-    NSURL *url = [NSURL URLWithString:self.videoItem.videoStreamLink];
-    if (url){
-        AVPlayer *player = [[AVPlayer alloc]initWithURL:url];
-        AVPlayerViewController *playerViewController = [AVPlayerViewController new];
-        playerViewController.player = player;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self presentViewController:playerViewController animated:YES completion:^{
-                [playerViewController.player play];
-            }];
-        });
-    }
-}
-
-- (void)likeVideo {
-    if (!self.isPressed) {
-        [self.likeButton setImage:[UIImage imageNamed: @"like_selected"] forState:UIControlStateNormal];
-        self.isPressed = YES;
-    } else {
-        self.isPressed = NO;
-        [self.likeButton setImage:[UIImage imageNamed: @"like_unselected"] forState:UIControlStateNormal];
-    }
-    
-    
-    //    implement core data save here
-    
-    
-    NSLog(@"Like");
-}
-
-- (void)shareVideo {
-    NSMutableArray *activityItems= [NSMutableArray arrayWithObjects:self.videoItem.videoLink, nil];
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-    activityViewController.excludedActivityTypes = @[UIActivityTypePostToWeibo, UIActivityTypePrint, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr, UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo, UIActivityTypeAirDrop];
-    
-    if (@available (iOS 13,*)) {
-        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-            [self presentViewController:activityViewController animated:YES completion:nil];
-        } else {
-            activityViewController.modalPresentationStyle = UIModalPresentationPopover;
-            activityViewController.popoverPresentationController.sourceView = self.shareButton;
-            [self presentViewController:activityViewController animated:YES completion:nil];
-        }
-    } else {
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-            [self presentViewController:activityViewController animated:YES completion:nil];
-        } else {
-            activityViewController.modalPresentationStyle = UIModalPresentationPopover;
-            activityViewController.popoverPresentationController.sourceView = self.shareButton;
-            [self presentViewController:activityViewController animated:YES completion:nil];
-        }
-    }
-}
-
--(void)initWithItem:(VideoItem *)item; {
-    _videoItem = item;
-    _videoImage = item.image;
-    _speachSpeaker = item.videoSpeaker;
-    _speachTitle = [self getSubstring:item.videoTitle];
-    _speachDescription = item.videoDescription;
-    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]]; ;
-}
-
-- (NSString *)getDuration:(NSMutableString *)duration {
-    NSMutableString *newDuration = duration;
-    NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
-    if ([substring isEqualToString:@"00:"]) {
-        [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];
-    }
-    return newDuration;
-}
-
-- (NSString *)getSubstring:(NSString *)string {
-    NSRange range = [string rangeOfString:@" |"];
-    if(range.location != NSNotFound) {
-        NSString *result = [string substringWithRange:NSMakeRange(0, range.location)];
-        return result;
-    }
-    return @"";
-}
-
-- (void)loadImageForItem:(VideoItem *)item {
-    
-    __weak typeof(self) weakSelf = self;
-    self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
-    [self.videoService loadImageForURL:item.videoImageURL completion:^(UIImage *image) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.videoImage = image;
-            weakSelf.videoImageView.image = weakSelf.videoImage;
-            [weakSelf.playVideoButton setHidden:NO];
-            [weakSelf.durationLabel setHidden:NO];
-            
-            [weakSelf setImageViewHeightConstraint];
-            
-            [weakSelf.videoImageView setNeedsDisplay];
-            [weakSelf.videoImageView setNeedsLayout];
-        });
-    }];
-}
-
-- (void)setImageViewHeightConstraint {
-    CGFloat coef = self.videoImage.size.height/self.videoImage.size.width;
-    if (self.view.bounds.size.height > self.view.bounds.size.width) {
-        self.videoImageConstraintPortrait = [NSLayoutConstraint constraintWithItem:self.videoImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0.0];
-        self.videoImageConstraintPortrait.constant = self.view.frame.size.width * coef;
-        [self.videoImageView addConstraint:self.videoImageConstraintPortrait];
-    } else {
-        self.videoImageConstraintLandscape = [NSLayoutConstraint constraintWithItem:self.videoImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:self.view.frame.size.height * coef];
-        [self.videoImageView addConstraint:self.videoImageConstraintLandscape];
-    }
 }
 @end

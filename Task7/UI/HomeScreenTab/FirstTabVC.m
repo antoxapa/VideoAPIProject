@@ -22,14 +22,11 @@
 @property (nonatomic, strong) VideoService *videoService;
 @property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
 
-@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic, strong) UIAlertController *pending;
 
 @end
-
-
 @implementation FirstTabVC
-@synthesize activityIndicator;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -37,14 +34,6 @@
     self.dataSource = [NSArray new];
     
     [self setupCollectionView];
-    
-    CGRect rect = [[UIScreen mainScreen] bounds];
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.activityIndicator.frame = CGRectMake((rect.size.width-50)/2, (rect.size.height-50)/2, 50, 50);
-    self.activityIndicator.hidesWhenStopped = YES;
-    self.activityIndicator.center = self.view.center;
-    [self.collectionView addSubview:self.activityIndicator];
-    
     
     [self startLoading];
 }
