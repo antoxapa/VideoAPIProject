@@ -23,6 +23,7 @@
 		063F059624C2FC3A00C8A6B7 /* VideoService.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059524C2FC3A00C8A6B7 /* VideoService.m */; };
 		063F05A024C2FE5F00C8A6B7 /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059F24C2FE5F00C8A6B7 /* XMLParser.m */; };
 		063F05A324C33D8B00C8A6B7 /* DownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */; };
+		063F05A624C417EF00C8A6B7 /* VideoInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05A524C417EF00C8A6B7 /* VideoInfoVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,8 @@
 		063F059F24C2FE5F00C8A6B7 /* XMLParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLParser.m; sourceTree = "<group>"; };
 		063F05A124C33D8B00C8A6B7 /* DownloadOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadOperation.h; sourceTree = "<group>"; };
 		063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadOperation.m; sourceTree = "<group>"; };
+		063F05A424C417EF00C8A6B7 /* VideoInfoVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoInfoVC.h; sourceTree = "<group>"; };
+		063F05A524C417EF00C8A6B7 /* VideoInfoVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoInfoVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +179,8 @@
 				063F057F24C0FE6600C8A6B7 /* MainTabBarController */,
 				063F058324C0FF9C00C8A6B7 /* FirstTab */,
 				063F058724C0FFB600C8A6B7 /* SecondTab */,
+				063F05A424C417EF00C8A6B7 /* VideoInfoVC.h */,
+				063F05A524C417EF00C8A6B7 /* VideoInfoVC.m */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -323,6 +328,7 @@
 			files = (
 				063F04E924C0F6DD00C8A6B7 /* main.m in Sources */,
 				063F058D24C1B60100C8A6B7 /* HeaderView.m in Sources */,
+				063F05A624C417EF00C8A6B7 /* VideoInfoVC.m in Sources */,
 				063F059624C2FC3A00C8A6B7 /* VideoService.m in Sources */,
 				063F05A324C33D8B00C8A6B7 /* DownloadOperation.m in Sources */,
 				063F04E124C0F6DD00C8A6B7 /* Task7.xcdatamodeld in Sources */,

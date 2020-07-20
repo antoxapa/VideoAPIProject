@@ -12,6 +12,8 @@
 #import "VideoService.h"
 #import "VideoItem.h"
 #import "XMLParser.h"
+#import "VideoInfoVC.h"
+
 
 @interface FirstTabVC ()
 
@@ -20,10 +22,14 @@
 @property (nonatomic, strong) VideoService *videoService;
 @property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
 
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, strong) UIAlertController *pending;
+
 @end
 
-@implementation FirstTabVC
 
+@implementation FirstTabVC
+@synthesize activityIndicator;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -31,13 +37,45 @@
     self.dataSource = [NSArray new];
     
     [self setupCollectionView];
+    
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activityIndicator.frame = CGRectMake((rect.size.width-50)/2, (rect.size.height-50)/2, 50, 50);
+    self.activityIndicator.hidesWhenStopped = YES;
+    self.activityIndicator.center = self.view.center;
+    [self.collectionView addSubview:self.activityIndicator];
+    
+    
     [self startLoading];
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!self.pending) {
+    self.pending = [UIAlertController alertControllerWithTitle:nil
+                                                                        message:@"Loading...\n\n"
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+         UIActivityIndicatorView* indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+         indicator.color = [UIColor blackColor];
+         indicator.translatesAutoresizingMaskIntoConstraints=NO;
+    [self.pending.view addSubview:indicator];
+         
+    [indicator.centerYAnchor constraintEqualToAnchor:self.pending.view.centerYAnchor constant:15].active = true;
+        [indicator.centerXAnchor constraintEqualToAnchor:self.pending.view.centerXAnchor].active = true;
+      
+         [indicator setUserInteractionEnabled:NO];
+         [indicator startAnimating];
+    [self presentViewController:self.pending animated:YES completion:nil];
+    }
 }
 
 - (void)startLoading {
+        
+//    [self.activityIndicator performSelector:@selector(startAnimating) withObject:nil afterDelay:0.1];
+    
     __weak typeof (self) weakSelf = self;
     [self.videoService loadVideo:^(NSArray<VideoItem *> *video, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            
             if (error) {
                 UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
                                                                                          message:[NSString stringWithFormat:@"%@", error]
@@ -46,10 +84,14 @@
                 [weakSelf presentViewController:alertController animated:YES completion:nil];
             } else {
                 weakSelf.dataSource = video;
+                [self dismissViewControllerAnimated:YES completion:nil];
+//                [self.activityIndicator performSelector:@selector(stopAnimating) withObject:nil afterDelay:0.1];
                 [weakSelf.collectionView reloadData];
+                
             }
         });
     }];
+     
 }
 
 - (void)setupCollectionView {
@@ -144,6 +186,14 @@
     }
     [self.collectionView.collectionViewLayout invalidateLayout];
     [self.collectionView reloadData];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    VideoInfoVC *vc = [[VideoInfoVC alloc]init];
+    
+    [vc initWithItem: self.dataSource[indexPath.item]];
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 

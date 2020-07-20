@@ -53,7 +53,14 @@
         
     } else if ([elementName isEqualToString:@"media:group"]) {
         self.parsingDictionary = [NSMutableDictionary new];
-    } else if ([elementName isEqualToString:@"itunes:image"]) {
+        
+    }
+    else if ([elementName isEqualToString:@"media:content"]) {
+
+        NSString *url = [attributeDict objectForKey:@"url"];;
+        [self.parsingDictionary setObject:url forKey:elementName];
+    }
+    else if ([elementName isEqualToString:@"itunes:image"]) {
         NSString *url = [attributeDict objectForKey:@"url"];;
         [self.parsingDictionary setObject:url forKey:elementName];
     } else {
@@ -72,12 +79,12 @@
     if (self.parsingString) {
 
         [self.parsingDictionary setObject:self.parsingString forKey:elementName];
-        
         self.parsingString = nil;
     }
     
     if ([elementName isEqualToString:@"media:group"]) {
         [self.itemDictionary setObject:self.parsingDictionary forKey:elementName];
+        
         self.parsingDictionary = nil;
     
     } else if ([elementName isEqualToString:@"itunes:duration"]) {

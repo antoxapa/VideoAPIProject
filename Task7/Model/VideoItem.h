@@ -19,7 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *videoImageURL;
 @property (nonatomic, copy) NSString *videoDuration;
 @property (nonatomic, copy) NSString *videoSpeaker;
+@property (nonatomic, copy) NSString *videoStreamLink;
 @property (nonatomic, strong) UIImage *image;
+
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 

@@ -21,6 +21,7 @@
         
         NSDictionary *mediaGroup = dictionary[@"media:group"];
         _videoSpeaker = mediaGroup[@"media:credit"];
+        _videoStreamLink = mediaGroup[@"media:content"];
         
     }
     return self;
