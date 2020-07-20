@@ -12,14 +12,19 @@
 #import "VideoInfoVC.h"
 #import "AppDelegate.h"
 #import "Video+CoreDataProperties.h"
+#import "VideoService.h"
+#import "XMLParser.h"
 
 @interface SecondTabVC ()
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
+@property (nonatomic, strong) VideoService *videoService;
 
 @property (nonatomic, strong) NSMutableArray <Video *> *coreVideoItems;
+
+
 
 @end
 
@@ -34,6 +39,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
 
     [self viewContext].automaticallyMergesChangesFromParent = YES;
     
@@ -45,6 +52,17 @@
     [super viewWillAppear:animated];
      self.coreVideoItems = [[self fetchCoreVideos] mutableCopy];
     [self.collectionView reloadData];
+}
+
+- (void)loadImageForIndexPath:(NSIndexPath *)indexPath {
+    __weak typeof(self) weakSelf = self;
+    Video *item = self.coreVideoItems[indexPath.item];
+    [self.videoService loadImageForURL:item.videoImageURL completion:^(UIImage *image) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.coreVideoItems[indexPath.item].videoImage = UIImagePNGRepresentation(image);
+            [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        });
+    }];
 }
 
 
@@ -98,6 +116,9 @@
     VideoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     Video *item = self.coreVideoItems[indexPath.item];
     
+    if (!item.videoImage) {
+        [self loadImageForIndexPath:indexPath];
+    }
     [cell initWithCoreItem:item];
     return cell;
 }

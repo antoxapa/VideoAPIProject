@@ -38,7 +38,12 @@
 }
 
 -(void)initWithCoreItem:(Video *)item; {
-    _videoImage.image = [UIImage imageWithData:item.videoImage];
+    if (!item.videoImage) {
+        _videoImage.image = [UIImage imageNamed:@"loading"];
+    } else {
+        _videoImage.image = [UIImage imageWithData:item.videoImage];
+    }
+    
     _speakerLabel.text = item.videoSpeaker;
     _speachTitleLabel.text = [self getSubstring:item.videoTitle];
     _videoDuration.text = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
@@ -46,6 +51,8 @@
 }
 
 -(void)initWithItem:(VideoItem *)item; {
+
+    _videoImage.image = item.image;
     _videoImage.image = item.image;
     _speakerLabel.text = item.videoSpeaker;
     _speachTitleLabel.text = [self getSubstring:item.videoTitle];
@@ -72,7 +79,7 @@
 
 - (void)setupViews {
     
-    self.videoImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"po"]];
+    self.videoImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"loading"]];
     [self addSubview:self.videoImage];
     self.videoImage.contentMode = UIViewContentModeScaleToFill;
     self.videoImage.translatesAutoresizingMaskIntoConstraints = false;
@@ -93,7 +100,6 @@
     self.speakerLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     self.speakerLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
-    self.speakerLabel.text = @"My favourite author calling blasldalsdlasldalsd";
     self.speakerLabel.textAlignment = NSTextAlignmentLeft;
     self.speakerLabel.numberOfLines = 1;
     self.speakerLabel.textColor = UIColor.darkGrayColor;
@@ -113,7 +119,6 @@
     self.speachTitleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
     self.speachTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
-    self.speachTitleLabel.text = @"";
     self.speachTitleLabel.textAlignment = NSTextAlignmentLeft;
     self.speachTitleLabel.numberOfLines = 3;
     self.speachTitleLabel.textColor = UIColor.blackColor;

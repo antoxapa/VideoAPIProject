@@ -15,16 +15,27 @@
 #import "VideoInfoVC.h"
 
 
-@interface FirstTabVC ()
+@interface FirstTabVC () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating>
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic, strong) VideoService *videoService;
 @property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
-
 @property (nonatomic, strong) UIAlertController *pending;
 
+
+@property (nonatomic, strong) UISearchController *searchController;
+
+@property (nonatomic, copy) NSArray<VideoItem *> *searchResults;
+
+
+//this custom controller is only suppose to have number of rows and cell for row function of table datasource
+
+@property BOOL searchControllerWasActive;
+@property BOOL searchControllerSearchFieldWasFirstResponder;
+
 @end
+
 @implementation FirstTabVC
 
 - (void)viewDidLoad {
@@ -32,10 +43,15 @@
     
     self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
     self.dataSource = [NSArray new];
+    self.searchResults = [NSMutableArray new];
     
     [self setupCollectionView];
     
     [self startLoading];
+    
+    [self setupSearchController];
+    
+    
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -57,6 +73,19 @@
     }
 }
 
+- (void)setupSearchController {
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    self.searchController.searchResultsUpdater = self;
+    self.searchController.delegate = self;
+    self.searchController.searchBar.delegate = self;
+    self.searchController.hidesNavigationBarDuringPresentation = NO;
+    self.searchController.dimsBackgroundDuringPresentation = NO;
+    
+    self.navigationItem.titleView = self.searchController.searchBar;
+    self.definesPresentationContext = YES;
+
+}
+
 - (void)startLoading {
         
 //    [self.activityIndicator performSelector:@selector(startAnimating) withObject:nil afterDelay:0.1];
@@ -73,7 +102,8 @@
                 [weakSelf presentViewController:alertController animated:YES completion:nil];
             } else {
                 weakSelf.dataSource = video;
-                [self dismissViewControllerAnimated:YES completion:nil];
+                weakSelf.searchResults = [video mutableCopy];
+                [weakSelf dismissViewControllerAnimated:YES completion:nil];
 //                [self.activityIndicator performSelector:@selector(stopAnimating) withObject:nil afterDelay:0.1];
                 [weakSelf.collectionView reloadData];
                 
@@ -123,20 +153,31 @@
 
 - (void)loadImageForIndexPath:(NSIndexPath *)indexPath {
     __weak typeof(self) weakSelf = self;
-    VideoItem *item = self.dataSource[indexPath.item];
+    VideoItem *item = self.searchResults[indexPath.item];
     [self.videoService loadImageForURL:item.videoImageURL completion:^(UIImage *image) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.dataSource[indexPath.item].image = image;
+            weakSelf.searchResults[indexPath.item].image = image;
             [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
         });
     }];
 }
 
+- (UIImage *)loadImageForItem:(VideoItem *)item {
+    __block UIImage *downloadedImage;
+    [self.videoService loadImageForURL:item.videoImageURL completion:^(UIImage *image) {
+        downloadedImage = image;
+    }];
+    return downloadedImage;
+}
+
+#pragma mark:- CollectionViewDataSource and CollectionViewDelegate methods
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     VideoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     
-    VideoItem *item = self.dataSource[indexPath.item];
+    VideoItem *item = [[VideoItem alloc]init];
+    
+        item = self.searchResults[indexPath.item];
     
     if (!item.image) {
         [self loadImageForIndexPath:indexPath];
@@ -162,7 +203,16 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.dataSource.count;
+    
+    return self.searchResults.count;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    VideoInfoVC *vc = [[VideoInfoVC alloc]init];
+    
+    [vc initWithItem: self.searchResults[indexPath.item]];
+
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
@@ -177,13 +227,42 @@
     [self.collectionView reloadData];
 }
 
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    VideoInfoVC *vc = [[VideoInfoVC alloc]init];
-    
-    [vc initWithItem: self.dataSource[indexPath.item]];
-    
-    [self.navigationController pushViewController:vc animated:YES];
+#pragma mark - UISearchBarDelegate
+//
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
 }
+
+#pragma mark - UISearchResultsUpdating
+
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+
+    NSString *searchText = searchController.searchBar.text;
+    if (searchText.length != 0) {
+        self.searchControllerWasActive = true;
+        
+        NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(VideoItem *item, NSDictionary *bindings) {
+                return [item.videoTitle containsString:searchText];
+        }];
+        
+        self.searchResults = [[self.searchResults filteredArrayUsingPredicate:predicate] mutableCopy];
+    }
+    else {
+        self.searchResults = [self.dataSource mutableCopy];
+    }
+    [self.collectionView reloadData];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    self.searchControllerWasActive = false;
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+//- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+//    self.searchControllerWasActive = true;
+//    [self.collectionView reloadData];
+//}
+
+
 
 
 
