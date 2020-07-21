@@ -56,7 +56,7 @@
         
     }
     else if ([elementName isEqualToString:@"media:content"]) {
-
+        
         NSString *url = [attributeDict objectForKey:@"url"];;
         [self.parsingDictionary setObject:url forKey:elementName];
     }
@@ -67,7 +67,7 @@
         self.parsingString = [NSMutableString new];
     }
     
-
+    
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
@@ -77,7 +77,7 @@
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
     
     if (self.parsingString) {
-
+        
         [self.parsingDictionary setObject:self.parsingString forKey:elementName];
         self.parsingString = nil;
     }
@@ -86,10 +86,10 @@
         [self.itemDictionary setObject:self.parsingDictionary forKey:elementName];
         
         self.parsingDictionary = nil;
-    
+        
     } else if ([elementName isEqualToString:@"itunes:duration"]) {
-    [self.itemDictionary addEntriesFromDictionary:self.parsingDictionary];
-    self.parsingDictionary = nil;
+        [self.itemDictionary addEntriesFromDictionary:self.parsingDictionary];
+        self.parsingDictionary = nil;
     } else if ([elementName isEqualToString:@"item"]) {
         VideoItem *item = [[VideoItem alloc]initWithDictionary:self.itemDictionary];
         self.itemDictionary = nil;

@@ -20,6 +20,12 @@
 @property (strong, nonatomic) NSOperationQueue *queue;
 @property (strong, nonatomic) NSMutableDictionary<NSString *, NSArray<NSOperation *> *> *operations;
 
+@property (strong, nonatomic) NSURLSessionDataTask *dataTask;
+
+@property (copy, nonatomic) void (^completion)(UIImage *, NSError *);
+
+
+
 @end
 
 @implementation VideoService
@@ -66,7 +72,6 @@
         completion(image);
     };
     [self.queue addOperation:operation];
-    
 }
 - (void)cancelDownloadingForUrl:(NSString *)url {
     NSArray<NSOperation *> *operations = self.operations[url];
@@ -75,6 +80,27 @@
         [operation cancel];
     }
 }
+
+- (void)downloadImgeForURL:(NSString *)url completion:(void(^)(UIImage *, NSError *))completion {
+    
+    NSURL *newURL = [NSURL URLWithString:url];
+    self.dataTask = [[NSURLSession sharedSession] dataTaskWithURL:newURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (!data) { return; }
+        UIImage *image = [UIImage imageWithData:data];
+        if (completion) {
+            self.completion = completion;
+        }
+        completion(image, nil);
+    }];
+    [self.dataTask resume];
+}
+
+- (void)stopDownload {
+    [self.dataTask cancel];
+    
+}
+
+
 
 
 @end

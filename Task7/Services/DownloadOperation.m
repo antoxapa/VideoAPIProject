@@ -32,15 +32,15 @@
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (weakSelf.isCancelled) { return; }
         if (!data) { return; }
-               UIImage *image = [UIImage imageWithData:data];
-               weakSelf.image = image;
-               if (self.completion) {
-                   self.completion(image);
-               }
-           }];
-
-           if (self.isCancelled) { return; }
-           [dataTask resume];
+        UIImage *image = [UIImage imageWithData:data];
+        weakSelf.image = image;
+        if (self.completion) {
+            self.completion(image);
+        }
+    }];
+    
+    if (self.isCancelled) { return; }
+    [dataTask resume];
 }
 
 @end

@@ -100,7 +100,7 @@
     if (!self.isLiked) {
         [self.likeButton setImage:[UIImage imageNamed: @"like_selected"] forState:UIControlStateNormal];
         self.isLiked = YES;
-
+        
         NSManagedObjectContext *context = [self viewContext];
         
         __weak typeof (self) weakSelf = self;

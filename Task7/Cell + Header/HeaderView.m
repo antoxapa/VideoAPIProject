@@ -37,21 +37,18 @@
 - (void)setupLabel {
     self.titleLabel = [[UILabel alloc]init];
     [self addSubview:self.titleLabel];
-
-        self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        self.titleLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightBold];
+    
+    self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.titleLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightBold];
     self.titleLabel.text = @"Все видео";
-        self.titleLabel.textAlignment = NSTextAlignmentLeft;
-        self.titleLabel.numberOfLines = 1;
-        self.titleLabel.textColor = UIColor.blackColor;
-        [NSLayoutConstraint activateConstraints:@[
-    //        [self.imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-    //        [self.imageView.topAnchor constraintEqualToAnchor:self.topAnchor],
-
-            [self.titleLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:10],
-            [self.titleLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-            [self.titleLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-10],
-        ]];
+    self.titleLabel.textAlignment = NSTextAlignmentLeft;
+    self.titleLabel.numberOfLines = 1;
+    self.titleLabel.textColor = UIColor.blackColor;
+    [NSLayoutConstraint activateConstraints:@[
+        [self.titleLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:10],
+        [self.titleLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+        [self.titleLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-10],
+    ]];
 }
 
 

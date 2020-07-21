@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoItem : NSObject
 
+@property (nonatomic, strong) NSNumber *videoID;
 @property (nonatomic, copy) NSString *videoTitle;
 @property (nonatomic, copy) NSString *videoLink;
 @property (nonatomic, copy) NSString *videoDescription;

@@ -15,16 +15,16 @@
 #import "VideoService.h"
 #import "XMLParser.h"
 
-@interface SecondTabVC ()
+@interface SecondTabVC () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating>
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
-@property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
 @property (nonatomic, strong) VideoService *videoService;
 
 @property (nonatomic, strong) NSMutableArray <Video *> *coreVideoItems;
+@property (nonatomic, strong) NSMutableArray<Video *> *searchResults;
 
-
+@property (nonatomic, strong) UISearchController *searchController;
 
 @end
 
@@ -41,35 +41,53 @@
     [super viewDidLoad];
     
     self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
-
+    self.searchResults = [NSMutableArray new];
+    
     [self viewContext].automaticallyMergesChangesFromParent = YES;
     
     [self setupCollectionView];
+    [self setupSearchController];
 }
-
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-     self.coreVideoItems = [[self fetchCoreVideos] mutableCopy];
+    self.coreVideoItems = [[self fetchCoreVideos] mutableCopy];
+    self.searchResults = self.coreVideoItems;
     [self.collectionView reloadData];
 }
 
+- (void)setupSearchController {
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    self.searchController.searchResultsUpdater = self;
+    self.searchController.delegate = self;
+    self.searchController.searchBar.delegate = self;
+    self.searchController.hidesNavigationBarDuringPresentation = NO;
+    self.searchController.dimsBackgroundDuringPresentation = NO;
+    
+    self.navigationItem.titleView = self.searchController.searchBar;
+    self.definesPresentationContext = YES;
+}
 - (void)loadImageForIndexPath:(NSIndexPath *)indexPath {
     __weak typeof(self) weakSelf = self;
     Video *item = self.coreVideoItems[indexPath.item];
-    [self.videoService loadImageForURL:item.videoImageURL completion:^(UIImage *image) {
+    NSString *imageURL = item.videoImageURL;
+    NSInteger index = indexPath.item;
+    
+    [self.videoService loadImageForURL:imageURL completion:^(UIImage *image) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.coreVideoItems[indexPath.item].videoImage = UIImagePNGRepresentation(image);
-            [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+            if (index >= weakSelf.coreVideoItems.count) { return; }
+            if ([weakSelf.coreVideoItems[index].videoImageURL isEqualToString:imageURL]) {
+                weakSelf.coreVideoItems[index].videoImage = UIImagePNGRepresentation(image);
+                
+                [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+            }
         });
     }];
 }
 
-
 - (NSArray <Video *> *)fetchCoreVideos {
     NSManagedObjectContext *context = [self viewContext];
     NSFetchRequest *fetchRequest = [Video fetchRequest];
-    
     return [context executeFetchRequest:fetchRequest error:nil];
 }
 
@@ -157,12 +175,31 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     VideoInfoVC *vc = [[VideoInfoVC alloc]init];
     
-    if (self.tabBarController.selectedIndex == 0) {
-         [vc initWithItem: self.dataSource[indexPath.item]];
-    } else {
-         [vc initWithCoreItem: self.coreVideoItems[indexPath.item]at:indexPath];
-    }
+    [vc initWithCoreItem: self.coreVideoItems[indexPath.item]at:indexPath];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - UISearchResultsUpdating
+
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    
+    NSString *searchText = searchController.searchBar.text;
+    if (searchText.length != 0) {
+        
+        NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(Video *item, NSDictionary *bindings) {
+            return [item.videoTitle containsString:searchText] || [item.videoSpeaker containsString:searchText];
+        }];
+        
+        self.coreVideoItems = [[self.coreVideoItems filteredArrayUsingPredicate:predicate] mutableCopy];
+    }
+    else {
+        self.coreVideoItems = [self.searchResults mutableCopy];
+    }
+    [self.collectionView reloadData];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 

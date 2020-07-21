@@ -51,8 +51,7 @@
 }
 
 -(void)initWithItem:(VideoItem *)item; {
-
-    _videoImage.image = item.image;
+    
     _videoImage.image = item.image;
     _speakerLabel.text = item.videoSpeaker;
     _speachTitleLabel.text = [self getSubstring:item.videoTitle];
@@ -61,7 +60,7 @@
 
 - (NSString *)getDuration:(NSMutableString *)duration {
     NSMutableString *newDuration = duration;
-        NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
+    NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
     if ([substring isEqualToString:@"00:"]) {
         [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];
     }
@@ -104,7 +103,7 @@
     self.speakerLabel.numberOfLines = 1;
     self.speakerLabel.textColor = UIColor.darkGrayColor;
     [NSLayoutConstraint activateConstraints:@[
-    
+        
         [self.speakerLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:10],
         [self.speakerLabel.leadingAnchor constraintEqualToAnchor:self.videoImage.trailingAnchor constant:10],
         [self.speakerLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
@@ -123,7 +122,7 @@
     self.speachTitleLabel.numberOfLines = 3;
     self.speachTitleLabel.textColor = UIColor.blackColor;
     [NSLayoutConstraint activateConstraints:@[
-    
+        
         [self.speachTitleLabel.topAnchor constraintEqualToAnchor:self.speakerLabel.bottomAnchor constant:5],
         [self.speachTitleLabel.leadingAnchor constraintEqualToAnchor:self.videoImage.trailingAnchor constant:10],
         [self.speachTitleLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
@@ -143,11 +142,11 @@
     self.videoDuration.alpha = 0.8;
     
     [NSLayoutConstraint activateConstraints:@[
-    
+        
         [self.videoDuration.bottomAnchor constraintEqualToAnchor:self.videoImage.bottomAnchor constant:-5],
         [self.videoDuration.trailingAnchor constraintEqualToAnchor:self.videoImage.trailingAnchor constant:-5],
         [self.videoDuration.heightAnchor constraintEqualToConstant:20],
-
+        
     ]];
 }
 

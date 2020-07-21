@@ -28,21 +28,19 @@
 - (void)setupViews {
     FirstTabVC *firstTab = [[FirstTabVC alloc]init];
     firstTab.view.backgroundColor = [UIColor whiteColor];
-//    firstTab.title = @"";
+    //    firstTab.title = @"";
     UITabBarItem *infoTab = [[UITabBarItem alloc]initWithTitle:nil image:[UIImage imageNamed:@"home_unselected"] selectedImage:[UIImage imageNamed:@"home_selected"]];
     firstTab.tabBarItem = infoTab;
     
     self.firstVC = [[UINavigationController alloc]initWithRootViewController:firstTab];
-//    self.firstVC.navigationBar.barTintColor = [UIColor clearColor];
     
     
     SecondTabVC *secondTab = [[SecondTabVC alloc]init];
-//    secondTab.title = @"";
+    
     secondTab.view.backgroundColor = [UIColor whiteColor];
     UITabBarItem *galleryTab = [[UITabBarItem alloc]initWithTitle:nil image:[UIImage imageNamed:@"like_unselected"] selectedImage:[UIImage imageNamed:@"like_selected"]];
     secondTab.tabBarItem = galleryTab;
     self.secondVC = [[UINavigationController alloc]initWithRootViewController:secondTab];
-//    self.secondVC.navigationBar.barTintColor = [UIColor clearColor];
     
     
     self.viewControllers = @[self.firstVC, self.secondVC];
