@@ -20,18 +20,12 @@
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic, strong) VideoService *videoService;
+
 @property (nonatomic, copy) NSArray<VideoItem *> *dataSource;
-@property (nonatomic, strong) UIAlertController *pending;
-
-
-@property (nonatomic, strong) UISearchController *searchController;
-
 @property (nonatomic, strong) NSMutableArray<VideoItem *> *searchResults;
 
-
-//this custom controller is only suppose to have number of rows and cell for row function of table datasource
-
-//@property BOOL scisActive;
+@property (nonatomic, strong) UIAlertController *pending;
+@property (nonatomic, strong) UISearchController *searchController;
 
 @end
 
@@ -45,15 +39,15 @@
     self.searchResults = [NSMutableArray new];
     
     [self setupCollectionView];
-    
     [self startLoading];
-    
     [self setupSearchController];
-    
-    
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [self setupLoadingAlertController];
+}
+
+- (void)setupLoadingAlertController {
     if (!self.pending) {
         self.pending = [UIAlertController alertControllerWithTitle:nil
                                                            message:@"Loading...\n\n"
@@ -72,20 +66,7 @@
     }
 }
 
-- (void)setupSearchController {
-    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    self.searchController.searchResultsUpdater = self;
-    self.searchController.delegate = self;
-    self.searchController.searchBar.delegate = self;
-    self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.searchController.dimsBackgroundDuringPresentation = NO;
-    
-    self.navigationItem.titleView = self.searchController.searchBar;
-    self.definesPresentationContext = YES;
-}
-
 - (void)startLoading {
-    
     __weak typeof (self) weakSelf = self;
     [self.videoService loadVideo:^(NSArray<VideoItem *> *video, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -106,20 +87,18 @@
                 
                 [weakSelf dismissViewControllerAnimated:YES completion:nil];
                 [weakSelf.collectionView reloadData];
-                
             }
         });
     }];
 }
+#pragma mark:- Setup UI methods
 
 - (void)setupCollectionView {
     self.flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    
     self.collectionView = [[UICollectionView alloc]initWithFrame:self.view.bounds collectionViewLayout:self.flowLayout];
     
     [self.collectionView registerClass:[VideoCell class] forCellWithReuseIdentifier:@"Cell"];
     [self.collectionView registerClass:[HeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"Header"];
-    
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     
@@ -143,58 +122,54 @@
             [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
         ]];
     }
-    
     self.flowLayout.itemSize = CGSizeMake(self.collectionView.bounds.size.width - 40, 100);
     [self.flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     self.flowLayout.headerReferenceSize = CGSizeMake(150, 100);
     [self.flowLayout setSectionInset:UIEdgeInsetsMake(30, 0, 0, 0)];
 }
 
-- (void)loadImageForIndexPath:(NSIndexPath *)indexPath {
+- (void)setupSearchController {
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    self.searchController.searchResultsUpdater = self;
+    self.searchController.delegate = self;
+    self.searchController.searchBar.delegate = self;
+    self.searchController.hidesNavigationBarDuringPresentation = NO;
+    self.searchController.dimsBackgroundDuringPresentation = NO;
+    self.navigationItem.titleView = self.searchController.searchBar;
+    self.definesPresentationContext = YES;
+}
+
+#pragma mark:- Download methods
+
+- (void)downloadImageForIndexPath:(NSIndexPath *)indexPath {
+    
     __weak typeof(self) weakSelf = self;
     VideoItem *item = self.dataSource[indexPath.item];
     NSString *imageURL = item.videoImageURL;
     NSInteger index = indexPath.item;
     NSNumber *itemID = item.videoID;
-    
-    [self.videoService loadImageForURL:imageURL completion:^(UIImage *image) {
+    if (item.image) {
+        return;
+    }
+    [self.videoService downloadImgeForURL:imageURL completion:^(UIImage * image, NSError * error) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (error) {
+                return;
+            }
             if (index >= weakSelf.dataSource.count) { return; }
             if ([weakSelf.dataSource[index].videoID isEqualToNumber:itemID]) {
                 weakSelf.dataSource[index].image = image;
                 if ([weakSelf.searchResults containsObject:item]) {
                     [weakSelf.searchResults replaceObjectAtIndex:[weakSelf.searchResults indexOfObject:item]  withObject:item];
                 }
-                
                 [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
             }
         });
     }];
 }
-
-//- (void)downloadImageForIndexPath:(NSIndexPath *)indexPath {
-//
-//    __weak typeof(self) weakSelf = self;
-//    VideoItem *item = self.dataSource[indexPath.item];
-//    NSString *imageURL = item.videoImageURL;
-//    NSInteger index = indexPath.item;
-//    NSNumber *itemID = item.videoID;
-//    [self.videoService downloadImgeForURL:imageURL completion:^(UIImage * image, NSError * error) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            if (index >= weakSelf.dataSource.count) { return; }
-//            if ([weakSelf.dataSource[index].videoID isEqualToNumber:itemID]) {
-//                weakSelf.dataSource[index].image = image;
-//                if ([weakSelf.searchResults containsObject:item]) {
-//                    [weakSelf.searchResults replaceObjectAtIndex:[weakSelf.searchResults indexOfObject:item]  withObject:item];
-//                }
-//                [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-//            }
-//        });
-//    }];
-//}
-//- (void)stopDownloading  {
-//    [self.videoService stopDownload];
-//}
+- (void)stopDownloading  {
+    [self.videoService stopDownload];
+}
 
 #pragma mark:- CollectionViewDataSource and CollectionViewDelegate methods
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -204,9 +179,10 @@
     
     item = self.dataSource[indexPath.item];
     
-    if (!item.image) {
-        [self loadImageForIndexPath:indexPath];
-        //            [self downloadImageForIndexPath:indexPath];
+    if (!self.collectionView.isDecelerating) {
+        if (!item.image) {
+            [self downloadImageForIndexPath:indexPath];
+        }
     }
     [cell initWithItem:item];
     return cell;
@@ -222,13 +198,11 @@
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
     CGFloat width = (self.collectionView.bounds.size.width - 40);
     return CGSizeMake(width, 100);
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    
     return self.dataSource.count;
     
 }
@@ -236,6 +210,30 @@
     VideoInfoVC *vc = [[VideoInfoVC alloc]init];
     [vc initWithItem: self.dataSource[indexPath.item]];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - ScrollView methods
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+//    [self.videoService stopDownload];
+//}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        NSArray *indexPaths = self.collectionView.indexPathsForVisibleItems;
+        for (NSIndexPath *index in indexPaths) {
+            [self downloadImageForIndexPath:index];
+        }
+    }
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+    [self.videoService stopDownload];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    NSArray *indexPaths = self.collectionView.indexPathsForVisibleItems;
+    for (NSIndexPath *index in indexPaths) {
+        [self downloadImageForIndexPath:index];
+    }
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {

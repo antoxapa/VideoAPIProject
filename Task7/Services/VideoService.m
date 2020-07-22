@@ -20,12 +20,7 @@
 @property (strong, nonatomic) NSOperationQueue *queue;
 @property (strong, nonatomic) NSMutableDictionary<NSString *, NSArray<NSOperation *> *> *operations;
 
-@property (strong, nonatomic) NSURLSessionDataTask *dataTask;
-
 @property (copy, nonatomic) void (^completion)(UIImage *, NSError *);
-
-
-
 @end
 
 @implementation VideoService
@@ -63,28 +58,32 @@
     }];
     [dataTask resume];
 }
-- (void)loadImageForURL:(NSString *)url completion:(void(^)(UIImage *))completion {
-    [self cancelDownloadingForUrl:url];
-    DownloadOperation *operation = [[DownloadOperation alloc]initWithUrl:url];
-    
-    self.operations[url] = @[operation];
-    operation.completion = ^(UIImage *image) {
-        completion(image);
-    };
-    [self.queue addOperation:operation];
-}
-- (void)cancelDownloadingForUrl:(NSString *)url {
-    NSArray<NSOperation *> *operations = self.operations[url];
-    if (!operations) { return; }
-    for (NSOperation *operation in operations) {
-        [operation cancel];
-    }
-}
+//- (void)loadImageForURL:(NSString *)url completion:(void(^)(UIImage *))completion {
+//    [self cancelDownloadingForUrl:url];
+//    DownloadOperation *operation = [[DownloadOperation alloc]initWithUrl:url];
+//    
+//    self.operations[url] = @[operation];
+//    operation.completion = ^(UIImage *image) {
+//        completion(image);
+//    };
+//    [self.queue addOperation:operation];
+//}
+//- (void)cancelDownloadingForUrl:(NSString *)url {
+//    NSArray<NSOperation *> *operations = self.operations[url];
+//    if (!operations) { return; }
+//    for (NSOperation *operation in operations) {
+//        [operation cancel];
+//    }
+//}
 
 - (void)downloadImgeForURL:(NSString *)url completion:(void(^)(UIImage *, NSError *))completion {
     
     NSURL *newURL = [NSURL URLWithString:url];
-    self.dataTask = [[NSURLSession sharedSession] dataTaskWithURL:newURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithURL:newURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            completion(nil, error);
+            return;
+        }
         if (!data) { return; }
         UIImage *image = [UIImage imageWithData:data];
         if (completion) {
@@ -92,15 +91,17 @@
         }
         completion(image, nil);
     }];
-    [self.dataTask resume];
+    [dataTask resume];
 }
 
 - (void)stopDownload {
-    [self.dataTask cancel];
-    
+    [self.session getTasksWithCompletionHandler:^(NSArray<NSURLSessionDataTask *> * dataTasks, NSArray<NSURLSessionUploadTask *> * uploadTasks, NSArray<NSURLSessionDownloadTask *> * downloadTasks) {
+        
+        for (NSURLSessionDataTask *task in dataTasks) {
+            if (task.state == NSURLSessionTaskStateRunning) {
+                [task cancel];
+            }
+        }
+    }];
 }
-
-
-
-
 @end

@@ -28,8 +28,6 @@
     self.completion = completion;
     parser.delegate = self;
     [parser parse];
-    
-    
 }
 
 #pragma mark - NSXMLParserDelegate
@@ -53,10 +51,8 @@
         
     } else if ([elementName isEqualToString:@"media:group"]) {
         self.parsingDictionary = [NSMutableDictionary new];
-        
     }
     else if ([elementName isEqualToString:@"media:content"]) {
-        
         NSString *url = [attributeDict objectForKey:@"url"];;
         [self.parsingDictionary setObject:url forKey:elementName];
     }
@@ -66,8 +62,6 @@
     } else {
         self.parsingString = [NSMutableString new];
     }
-    
-    
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {

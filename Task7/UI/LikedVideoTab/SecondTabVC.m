@@ -56,6 +56,7 @@
     [self.collectionView reloadData];
 }
 
+#pragma mark: - Search COntroller
 - (void)setupSearchController {
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.searchResultsUpdater = self;
@@ -67,18 +68,23 @@
     self.navigationItem.titleView = self.searchController.searchBar;
     self.definesPresentationContext = YES;
 }
-- (void)loadImageForIndexPath:(NSIndexPath *)indexPath {
+
+- (void)downloadImageForIndexPath:(NSIndexPath *)indexPath {
     __weak typeof(self) weakSelf = self;
     Video *item = self.coreVideoItems[indexPath.item];
     NSString *imageURL = item.videoImageURL;
     NSInteger index = indexPath.item;
-    
-    [self.videoService loadImageForURL:imageURL completion:^(UIImage *image) {
+    if (item.videoImage) {
+        return;
+    }
+    [self.videoService downloadImgeForURL:imageURL completion:^(UIImage * image, NSError * error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (index >= weakSelf.coreVideoItems.count) { return; }
-            if ([weakSelf.coreVideoItems[index].videoImageURL isEqualToString:imageURL]) {
-                weakSelf.coreVideoItems[index].videoImage = UIImagePNGRepresentation(image);
-                
+            if ([weakSelf.coreVideoItems[index].videoLink isEqualToString:item.videoLink]) {
+                weakSelf.coreVideoItems[index].videoImage = UIImagePNGRepresentation(image);;
+                if ([weakSelf.searchResults containsObject:item]) {
+                    [weakSelf.searchResults replaceObjectAtIndex:[weakSelf.searchResults indexOfObject:item]  withObject:item];
+                }
                 [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
             }
         });
@@ -134,8 +140,10 @@
     VideoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     Video *item = self.coreVideoItems[indexPath.item];
     
-    if (!item.videoImage) {
-        [self loadImageForIndexPath:indexPath];
+    if (!self.collectionView.isDecelerating) {
+        if (!item.videoImage) {
+            [self downloadImageForIndexPath:indexPath];
+        }
     }
     [cell initWithCoreItem:item];
     return cell;
@@ -151,7 +159,6 @@
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
     CGFloat width = (self.collectionView.bounds.size.width - 40);
     return CGSizeMake(width, 100);
 }
@@ -174,9 +181,31 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     VideoInfoVC *vc = [[VideoInfoVC alloc]init];
-    
     [vc initWithCoreItem: self.coreVideoItems[indexPath.item]at:indexPath];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - ScrollView methods
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+//    [self.videoService stopDownload];
+//}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        NSArray *indexPaths = self.collectionView.indexPathsForVisibleItems;
+        for (NSIndexPath *index in indexPaths) {
+            [self downloadImageForIndexPath:index];
+        }
+    }
+}
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+    [self.videoService stopDownload];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    NSArray *indexPaths = self.collectionView.indexPathsForVisibleItems;
+    for (NSIndexPath *index in indexPaths) {
+        [self downloadImageForIndexPath:index];
+    }
 }
 
 #pragma mark - UISearchResultsUpdating

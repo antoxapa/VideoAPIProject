@@ -16,7 +16,6 @@
 
 @interface VideoInfoVC ()
 
-
 @property (nonatomic, strong) UIScrollView *mainScrollView;
 @property (nonatomic, strong) UIStackView *mainStackView;
 @property (nonatomic, strong) UIView *scrollContentView;
@@ -45,11 +44,6 @@
 
 @property (nonatomic, strong) VideoService *videoService;
 
-
-//@property (nonatomic, copy) VideoItem *videoItem;
-//@property (nonatomic, copy) Video *coreItem;
-
-
 @property (nonatomic, weak) NSLayoutConstraint *videoImageConstraintPortrait;
 @property (nonatomic, weak) NSLayoutConstraint *videoImageConstraintLandscape;
 
@@ -77,10 +71,60 @@
             self.isLiked = YES;
         }
     }
-    
     [self setupViews];
     
 }
+
+- (NSMutableArray <Video *>*)fetchVideoItems {
+    NSManagedObjectContext *context = [self viewContext];
+    NSFetchRequest *fetchRequest = [Video fetchRequest];
+    return [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+}
+
+#pragma mark: - Init methods
+-(void)initWithItem:(VideoItem *)item {
+    //    _videoItem = item;
+    _videoStreamLink = item.videoStreamLink;
+    _videoImageURL = item.videoImageURL;
+    _videoLink = item.videoLink;
+    _videoImage = item.image;
+    _speachSpeaker = item.videoSpeaker;
+    _speachTitle = [self getSubstring:item.videoTitle];
+    _speachDescription = item.videoDescription;
+    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
+}
+
+-(void)initWithCoreItem:(Video *)item at:(NSIndexPath *)indexPath {
+    _videoStreamLink = item.videoStreamLink;
+    _videoImageURL = item.videoImageURL;
+    _videoLink = item.videoLink;
+    _videoImage = [UIImage imageWithData:item.videoImage];
+    _speachSpeaker = item.videoSpeaker;
+    _speachTitle = item.videoTitle;
+    _speachDescription = item.videoDescription;
+    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
+    _isLiked = YES;
+    _indexPath = indexPath;
+}
+
+- (NSString *)getDuration:(NSMutableString *)duration {
+    NSMutableString *newDuration = duration;
+    NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
+    if ([substring isEqualToString:@"00:"]) {
+        [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];
+    }
+    return newDuration;
+}
+
+- (NSString *)getSubstring:(NSString *)string {
+    NSRange range = [string rangeOfString:@" |"];
+    if(range.location != NSNotFound) {
+        NSString *result = [string substringWithRange:NSMakeRange(0, range.location)];
+        return result;
+    }
+    return @"";
+}
+#pragma mark: - Buttons methods
 
 - (void)showVideo {
     NSURL *url = [NSURL URLWithString:self.videoStreamLink];
@@ -147,38 +191,6 @@
     }
 }
 
-- (NSMutableArray <Video *>*)fetchVideoItems {
-    NSManagedObjectContext *context = [self viewContext];
-    NSFetchRequest *fetchRequest = [Video fetchRequest];
-    
-    return [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
-}
-
--(void)initWithItem:(VideoItem *)item {
-    //    _videoItem = item;
-    _videoStreamLink = item.videoStreamLink;
-    _videoImageURL = item.videoImageURL;
-    _videoLink = item.videoLink;
-    _videoImage = item.image;
-    _speachSpeaker = item.videoSpeaker;
-    _speachTitle = [self getSubstring:item.videoTitle];
-    _speachDescription = item.videoDescription;
-    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
-}
-
--(void)initWithCoreItem:(Video *)item at:(NSIndexPath *)indexPath {
-    _videoStreamLink = item.videoStreamLink;
-    _videoImageURL = item.videoImageURL;
-    _videoLink = item.videoLink;
-    _videoImage = [UIImage imageWithData:item.videoImage];
-    _speachSpeaker = item.videoSpeaker;
-    _speachTitle = item.videoTitle;
-    _speachDescription = item.videoDescription;
-    _duration = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
-    _isLiked = YES;
-    _indexPath = indexPath;
-}
-
 - (void)shareVideo {
     NSMutableArray *activityItems= [NSMutableArray arrayWithObjects:self.videoLink, nil];
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
@@ -203,30 +215,10 @@
     }
 }
 
-- (NSString *)getDuration:(NSMutableString *)duration {
-    NSMutableString *newDuration = duration;
-    NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
-    if ([substring isEqualToString:@"00:"]) {
-        [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];
-    }
-    return newDuration;
-}
-
-- (NSString *)getSubstring:(NSString *)string {
-    NSRange range = [string rangeOfString:@" |"];
-    if(range.location != NSNotFound) {
-        NSString *result = [string substringWithRange:NSMakeRange(0, range.location)];
-        return result;
-    }
-    return @"";
-}
-
 - (void)loadImageForURL:(NSString *)url {
-    
     __weak typeof(self) weakSelf = self;
     self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
-    [self.videoService loadImageForURL:url completion:^(UIImage *image) {
-        
+    [self.videoService downloadImgeForURL:url completion:^(UIImage * image, NSError * error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.videoImage = image;
             weakSelf.videoImageView.image = weakSelf.videoImage;
@@ -282,9 +274,7 @@
     
     // VideoImage View
     self.videoImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed: @"loading"]];
-    
     self.videoImageView.contentMode = UIViewContentModeScaleAspectFit;
-    
     self.videoImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoImageView setUserInteractionEnabled:YES];
     
@@ -292,13 +282,10 @@
     [self.playVideoButton setImage:[UIImage imageNamed:@"playVideo"] forState:UIControlStateNormal];
     self.playVideoButton.backgroundColor = [UIColor whiteColor];
     self.playVideoButton.alpha = 0.8;
-    
     [self.playVideoButton addTarget:self action:@selector(showVideo) forControlEvents:UIControlEventTouchUpInside];
-    
     self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.playVideoButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.videoImageView addSubview:self.playVideoButton];
-    
     self.playVideoButton.layer.cornerRadius = 35;
     self.playVideoButton.clipsToBounds = YES;
     
@@ -309,13 +296,12 @@
         [self.playVideoButton.widthAnchor constraintEqualToConstant:70],
     ]];
     
+    // Duration label
     self.durationLabel = [[UILabel alloc]init];
     [self.videoImageView addSubview:self.durationLabel];
-    
     self.durationLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.durationLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.durationLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    
     self.durationLabel.text = self.duration;
     self.durationLabel.textAlignment = NSTextAlignmentCenter;
     self.durationLabel.textColor = UIColor.whiteColor;
@@ -323,13 +309,11 @@
     self.durationLabel.alpha = 0.8;
     
     [NSLayoutConstraint activateConstraints:@[
-        
         [self.durationLabel.bottomAnchor constraintEqualToAnchor:self.videoImageView.bottomAnchor constant:-20],
         [self.durationLabel.trailingAnchor constraintEqualToAnchor:self.videoImageView.trailingAnchor constant:-20],
         [self.durationLabel.heightAnchor constraintEqualToConstant:30],
         [self.durationLabel.widthAnchor constraintEqualToConstant:50],
     ]];
-    
     if (self.videoImage) {
         self.videoImageView.image = self.videoImage;
         [self setImageViewHeightConstraint];
@@ -338,8 +322,6 @@
         [self.durationLabel setHidden:YES];
         [self loadImageForURL:self.videoImageURL];
     }
-    
-    
     [self.scrollContentView addSubview:self.videoImageView];
     
     [NSLayoutConstraint activateConstraints:@[
@@ -349,7 +331,6 @@
     ]];
     
     //    Image and labels view
-    
     self.labelsStackView = [[UIStackView alloc]init];
     self.labelsStackView.translatesAutoresizingMaskIntoConstraints = NO;
     self.labelsStackView.axis = UILayoutConstraintAxisVertical;
@@ -362,12 +343,9 @@
     self.speachLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.speachLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightBold];
     self.speachLabel.text = self.speachTitle;
-    
     self.speachLabel.textAlignment = NSTextAlignmentLeft;
     self.speachLabel.numberOfLines = 3;
     self.speachLabel.textColor = UIColor.blackColor;
-    
-    
     [self.labelsStackView addArrangedSubview:self.speachLabel];
     
     // speaker label
@@ -380,23 +358,14 @@
     //    self.speakerLabel.text = @"asdasdasdsadasdasd ad a dsa dsad sa sa d";
     self.speakerLabel.textAlignment = NSTextAlignmentLeft;
     self.speakerLabel.textColor = UIColor.darkGrayColor;
-    
     [self.labelsStackView addArrangedSubview:self.speakerLabel];
     
 #pragma mark: - Button content view
-    
     self.buttonsContentView = [[UIStackView alloc]init];
     self.buttonsContentView.translatesAutoresizingMaskIntoConstraints = NO;
-    
     self.buttonsContentView.alignment = UIStackViewAlignmentLeading;
     self.buttonsContentView.distribution = UIStackViewDistributionEqualCentering;
     self.buttonsContentView.spacing = 15;
-    //    [self.buttonsContentView setUserInteractionEnabled:YES];
-    
-    [NSLayoutConstraint activateConstraints:@[
-        //        [self.buttonsContentView.heightAnchor constraintEqualToConstant:50],
-        //        [self.buttonsContentView.widthAnchor constraintEqualToConstant:50],
-    ]];
     
     //    Like button
     self.likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -405,46 +374,25 @@
     } else {
         [self.likeButton setImage:[UIImage imageNamed:@"like_unselected"] forState:UIControlStateNormal];
     }
-    
     self.likeButton.backgroundColor = [UIColor whiteColor];
-    
     [self.likeButton addTarget:self action:@selector(likeVideo) forControlEvents:UIControlEventTouchUpInside];
-    
     self.likeButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.likeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     
     [self.buttonsContentView addArrangedSubview:self.likeButton];
     
-    //    [NSLayoutConstraint activateConstraints:@[
-    //        [self.likeButton.topAnchor constraintEqualToAnchor:self.buttonsContentView.topAnchor],
-    //        [self.likeButton.leadingAnchor constraintEqualToAnchor:self.buttonsContentView.leadingAnchor],
-    //        [self.likeButton.centerYAnchor constraintEqualToAnchor:self.buttonsContentView.centerYAnchor],
-    //                [self.likeButton.heightAnchor constraintEqualToConstant:50],
-    //                [self.likeButton.widthAnchor constraintEqualToConstant:50],
-    //    ]];
-    
     //    Share button
-    
     self.shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.shareButton setImage:[UIImage imageNamed:@"upload"] forState:UIControlStateNormal];
     self.shareButton.backgroundColor = [UIColor whiteColor];
     [self.shareButton setUserInteractionEnabled:YES];
-    
     [self.shareButton addTarget:self action:@selector(shareVideo) forControlEvents:UIControlEventTouchUpInside];
-    
     self.shareButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.shareButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     
     [self.buttonsContentView addArrangedSubview:self.shareButton];
     
-    //    [NSLayoutConstraint activateConstraints:@[
-    //        [self.shareButton.topAnchor constraintEqualToAnchor:self.buttonsContentView.topAnchor],
-    //        [self.shareButton.leadingAnchor constraintEqualToAnchor:self.likeButton.trailingAnchor constant:15],
-    //        [self.shareButton.centerYAnchor constraintEqualToAnchor:self.likeButton.centerYAnchor],
-    //    ]];
-    
 #pragma mark: - Info and Description labels
-    
     self.textViewContentView = [[UIStackView alloc]init];
     self.textViewContentView.translatesAutoresizingMaskIntoConstraints = NO;
     self.textViewContentView.axis = UILayoutConstraintAxisVertical;
@@ -455,7 +403,6 @@
     self.infoLabel = [[UILabel alloc]init];
     self.infoLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.infoLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
-    
     self.infoLabel.textColor = [UIColor darkGrayColor];
     self.infoLabel.text = @"ИНФОРМАЦИЯ";
     
@@ -472,11 +419,9 @@
     [self.textViewContentView addArrangedSubview:labelView];
     
     [NSLayoutConstraint activateConstraints:@[
-        
         [self.infoLabel.topAnchor constraintEqualToAnchor:labelView.topAnchor],
         [self.infoLabel.leadingAnchor constraintEqualToAnchor:labelView.leadingAnchor],
         [self.infoLabel.trailingAnchor constraintEqualToAnchor:labelView.trailingAnchor],
-        //        [self.infoLabel.heightAnchor constraintEqualToConstant: 30],
         
         [underlineView.topAnchor constraintEqualToAnchor:self.infoLabel.bottomAnchor constant:3],
         [underlineView.leadingAnchor constraintEqualToAnchor:self.infoLabel.leadingAnchor],
@@ -486,40 +431,26 @@
         [labelView.heightAnchor constraintEqualToConstant: 20],
         [labelView.widthAnchor constraintEqualToAnchor:self.infoLabel.widthAnchor],
     ]];
-    //    NSMutableAttributedString *attributeString = [[NSMutableAttributedString alloc] initWithString:@"ИНФОРМАЦИЯ"];
-    //    [attributeString addAttribute:NSUnderlineStyleAttributeName
-    //                            value:[NSNumber numberWithInt:1]
-    //                            range:(NSRange){0,[attributeString length]}];
-    //
-    //    self.infoLabel.attributedText = attributeString;
-    
-    //    [self.infoLabel.heightAnchor constraintEqualToConstant:50].active = true;
-    
     self.descriptionLabel = [[UILabel alloc]init];
     self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.descriptionLabel.numberOfLines = 0;
     self.descriptionLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     self.descriptionLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.descriptionLabel.textColor = [UIColor darkGrayColor];
-    
     self.descriptionLabel.text = self.speachDescription;
     self.descriptionLabel.textAlignment = NSTextAlignmentLeft;
     self.descriptionLabel.textColor = UIColor.blackColor;
     self.descriptionLabel.alpha = 0.8;
     
-    
     [self.textViewContentView addArrangedSubview:self.descriptionLabel];
     
 #pragma mark: - Main StackView
-    
     self.mainStackView = [[UIStackView alloc]init];
-    
     self.mainStackView.axis = UILayoutConstraintAxisVertical;
     self.mainStackView.distribution = UIStackViewDistributionEqualSpacing;
     self.mainStackView.alignment = UIStackViewAlignmentLeading;
     self.mainStackView.spacing = 30;
     self.mainStackView.translatesAutoresizingMaskIntoConstraints = false;
-    
     [self.mainStackView addArrangedSubview:self.labelsStackView];
     [self.mainStackView addArrangedSubview:self.buttonsContentView];
     [self.mainStackView addArrangedSubview:self.textViewContentView];
@@ -527,7 +458,6 @@
     [self.scrollContentView addSubview:self.mainStackView];
     
     [NSLayoutConstraint activateConstraints:@[
-        
         [self.mainStackView.topAnchor constraintEqualToAnchor:self.videoImageView.bottomAnchor constant:15],
         [self.mainStackView.leadingAnchor constraintEqualToAnchor:self.scrollContentView.leadingAnchor constant:15],
         [self.mainStackView.trailingAnchor constraintEqualToAnchor:self.scrollContentView.trailingAnchor constant:-15],
