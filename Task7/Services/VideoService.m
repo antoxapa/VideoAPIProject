@@ -10,15 +10,12 @@
 #import "ParserProtocol.h"
 #import "XMLParser.h"
 #import "VideoItem.h"
-#import "DownloadOperation.h"
 
 
 @interface VideoService ()
 
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) id<ParserProtocol> parser;
-@property (strong, nonatomic) NSOperationQueue *queue;
-@property (strong, nonatomic) NSMutableDictionary<NSString *, NSArray<NSOperation *> *> *operations;
 
 @property (copy, nonatomic) void (^completion)(UIImage *, NSError *);
 @end
@@ -29,8 +26,6 @@
     self = [super init];
     if (self) {
         _parser = parser;
-        _queue = [NSOperationQueue new];
-        _operations = [NSMutableDictionary new];
     }
     return self;
 }
@@ -58,23 +53,6 @@
     }];
     [dataTask resume];
 }
-//- (void)loadImageForURL:(NSString *)url completion:(void(^)(UIImage *))completion {
-//    [self cancelDownloadingForUrl:url];
-//    DownloadOperation *operation = [[DownloadOperation alloc]initWithUrl:url];
-//    
-//    self.operations[url] = @[operation];
-//    operation.completion = ^(UIImage *image) {
-//        completion(image);
-//    };
-//    [self.queue addOperation:operation];
-//}
-//- (void)cancelDownloadingForUrl:(NSString *)url {
-//    NSArray<NSOperation *> *operations = self.operations[url];
-//    if (!operations) { return; }
-//    for (NSOperation *operation in operations) {
-//        [operation cancel];
-//    }
-//}
 
 - (void)downloadImgeForURL:(NSString *)url completion:(void(^)(UIImage *, NSError *))completion {
     

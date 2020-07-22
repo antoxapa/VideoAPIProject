@@ -22,10 +22,14 @@
 		063F059224C2F4E400C8A6B7 /* VideoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059124C2F4E400C8A6B7 /* VideoItem.m */; };
 		063F059624C2FC3A00C8A6B7 /* VideoService.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059524C2FC3A00C8A6B7 /* VideoService.m */; };
 		063F05A024C2FE5F00C8A6B7 /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F059F24C2FE5F00C8A6B7 /* XMLParser.m */; };
-		063F05A324C33D8B00C8A6B7 /* DownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */; };
 		063F05A624C417EF00C8A6B7 /* VideoInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05A524C417EF00C8A6B7 /* VideoInfoVC.m */; };
 		063F05AF24C5A8FB00C8A6B7 /* Video+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05AD24C5A8FB00C8A6B7 /* Video+CoreDataClass.m */; };
 		063F05B024C5A8FB00C8A6B7 /* Video+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05AE24C5A8FB00C8A6B7 /* Video+CoreDataProperties.m */; };
+		06AF8D0E24C8932F0053B543 /* XMLParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D0D24C8932F0053B543 /* XMLParserTest.m */; };
+		06AF8D1024C895010053B543 /* VideoServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D0F24C895010053B543 /* VideoServiceTest.m */; };
+		06AF8D1324C8B1900053B543 /* RLURLSessionMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D1224C8B1900053B543 /* RLURLSessionMock.m */; };
+		06AF8D1624C8B36D0053B543 /* RLURLSessionDataTaskMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */; };
+		06AF8D1824C8CDE80053B543 /* VideoItemTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D1724C8CDE80053B543 /* VideoItemTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,14 +73,19 @@
 		063F059D24C2FDEB00C8A6B7 /* ParserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserProtocol.h; sourceTree = "<group>"; };
 		063F059E24C2FE5F00C8A6B7 /* XMLParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XMLParser.h; sourceTree = "<group>"; };
 		063F059F24C2FE5F00C8A6B7 /* XMLParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLParser.m; sourceTree = "<group>"; };
-		063F05A124C33D8B00C8A6B7 /* DownloadOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadOperation.h; sourceTree = "<group>"; };
-		063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadOperation.m; sourceTree = "<group>"; };
 		063F05A424C417EF00C8A6B7 /* VideoInfoVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoInfoVC.h; sourceTree = "<group>"; };
 		063F05A524C417EF00C8A6B7 /* VideoInfoVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoInfoVC.m; sourceTree = "<group>"; };
 		063F05AB24C5A8FB00C8A6B7 /* Video+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Video+CoreDataProperties.h"; sourceTree = "<group>"; };
 		063F05AC24C5A8FB00C8A6B7 /* Video+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Video+CoreDataClass.h"; sourceTree = "<group>"; };
 		063F05AD24C5A8FB00C8A6B7 /* Video+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Video+CoreDataClass.m"; sourceTree = "<group>"; };
 		063F05AE24C5A8FB00C8A6B7 /* Video+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Video+CoreDataProperties.m"; sourceTree = "<group>"; };
+		06AF8D0D24C8932F0053B543 /* XMLParserTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLParserTest.m; sourceTree = "<group>"; };
+		06AF8D0F24C895010053B543 /* VideoServiceTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoServiceTest.m; sourceTree = "<group>"; };
+		06AF8D1124C8B1900053B543 /* RLURLSessionMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLURLSessionMock.h; sourceTree = "<group>"; };
+		06AF8D1224C8B1900053B543 /* RLURLSessionMock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLURLSessionMock.m; sourceTree = "<group>"; };
+		06AF8D1424C8B36D0053B543 /* RLURLSessionDataTaskMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLURLSessionDataTaskMock.h; sourceTree = "<group>"; };
+		06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLURLSessionDataTaskMock.m; sourceTree = "<group>"; };
+		06AF8D1724C8CDE80053B543 /* VideoItemTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoItemTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +149,13 @@
 			isa = PBXGroup;
 			children = (
 				063F04F224C0F6DD00C8A6B7 /* Task7Tests.m */,
+				06AF8D1724C8CDE80053B543 /* VideoItemTest.m */,
+				06AF8D0D24C8932F0053B543 /* XMLParserTest.m */,
+				06AF8D0F24C895010053B543 /* VideoServiceTest.m */,
+				06AF8D1124C8B1900053B543 /* RLURLSessionMock.h */,
+				06AF8D1224C8B1900053B543 /* RLURLSessionMock.m */,
+				06AF8D1424C8B36D0053B543 /* RLURLSessionDataTaskMock.h */,
+				06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */,
 				063F04F424C0F6DD00C8A6B7 /* Info.plist */,
 			);
 			path = Task7Tests;
@@ -208,8 +224,6 @@
 			children = (
 				063F059424C2FC3A00C8A6B7 /* VideoService.h */,
 				063F059524C2FC3A00C8A6B7 /* VideoService.m */,
-				063F05A124C33D8B00C8A6B7 /* DownloadOperation.h */,
-				063F05A224C33D8B00C8A6B7 /* DownloadOperation.m */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -349,7 +363,6 @@
 				063F05A624C417EF00C8A6B7 /* VideoInfoVC.m in Sources */,
 				063F059624C2FC3A00C8A6B7 /* VideoService.m in Sources */,
 				063F05AF24C5A8FB00C8A6B7 /* Video+CoreDataClass.m in Sources */,
-				063F05A324C33D8B00C8A6B7 /* DownloadOperation.m in Sources */,
 				063F04E124C0F6DD00C8A6B7 /* Task7.xcdatamodeld in Sources */,
 				063F05B024C5A8FB00C8A6B7 /* Video+CoreDataProperties.m in Sources */,
 				063F05A024C2FE5F00C8A6B7 /* XMLParser.m in Sources */,
@@ -367,6 +380,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06AF8D1824C8CDE80053B543 /* VideoItemTest.m in Sources */,
+				06AF8D1324C8B1900053B543 /* RLURLSessionMock.m in Sources */,
+				06AF8D0E24C8932F0053B543 /* XMLParserTest.m in Sources */,
+				06AF8D1024C895010053B543 /* VideoServiceTest.m in Sources */,
+				06AF8D1624C8B36D0053B543 /* RLURLSessionDataTaskMock.m in Sources */,
 				063F04F324C0F6DD00C8A6B7 /* Task7Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

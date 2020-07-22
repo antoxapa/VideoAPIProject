@@ -113,21 +113,12 @@
     [self.collectionView setContentInset:UIEdgeInsetsMake(0, 20, 0, 20)];
     self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    if (@available(iOS 11.0, *)) {
         [NSLayoutConstraint activateConstraints:@[
             [self.collectionView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
             [self.collectionView.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
             [self.collectionView.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
             [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
         ]];
-    } else {
-        [NSLayoutConstraint activateConstraints:@[
-            [self.collectionView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
-            [self.collectionView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-            [self.collectionView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-            [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
-        ]];
-    }
     
     self.flowLayout.itemSize = CGSizeMake(self.collectionView.bounds.size.width - 40, 100);
     [self.flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
