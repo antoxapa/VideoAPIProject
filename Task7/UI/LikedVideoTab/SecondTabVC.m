@@ -36,12 +36,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
     self.searchResults = [NSMutableArray new];
-    
     [self viewContext].automaticallyMergesChangesFromParent = YES;
-    
     [self setupCollectionView];
     [self setupSearchController];
 }
@@ -61,7 +58,6 @@
     self.searchController.searchBar.delegate = self;
     self.searchController.hidesNavigationBarDuringPresentation = NO;
     self.searchController.obscuresBackgroundDuringPresentation = NO;
-    
     self.navigationItem.titleView = self.searchController.searchBar;
     self.definesPresentationContext = YES;
 }
@@ -197,7 +193,6 @@
 }
 
 #pragma mark - UISearchResultsUpdating
-
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     
     NSString *searchText = searchController.searchBar.text;
@@ -206,8 +201,7 @@
         NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(Video *item, NSDictionary *bindings) {
             return [item.videoTitle containsString:searchText] || [item.videoSpeaker containsString:searchText];
         }];
-        
-        self.coreVideoItems = [[self.coreVideoItems filteredArrayUsingPredicate:predicate] mutableCopy];
+        self.coreVideoItems = [[self.searchResults filteredArrayUsingPredicate:predicate] mutableCopy];
     }
     else {
         self.coreVideoItems = [self.searchResults mutableCopy];
