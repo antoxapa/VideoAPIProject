@@ -60,7 +60,7 @@
     self.searchController.delegate = self;
     self.searchController.searchBar.delegate = self;
     self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.searchController.dimsBackgroundDuringPresentation = NO;
+    self.searchController.obscuresBackgroundDuringPresentation = NO;
     
     self.navigationItem.titleView = self.searchController.searchBar;
     self.definesPresentationContext = YES;

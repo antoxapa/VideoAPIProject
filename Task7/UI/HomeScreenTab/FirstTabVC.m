@@ -27,6 +27,8 @@
 @property (nonatomic, strong) UIAlertController *pending;
 @property (nonatomic, strong) UISearchController *searchController;
 
+@property (nonatomic, strong) UIActivityIndicatorView *indicator;
+
 @end
 
 @implementation FirstTabVC
@@ -52,16 +54,21 @@
         self.pending = [UIAlertController alertControllerWithTitle:nil
                                                            message:@"Loading...\n\n"
                                                     preferredStyle:UIAlertControllerStyleAlert];
-        UIActivityIndicatorView* indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        indicator.color = [UIColor blackColor];
-        indicator.translatesAutoresizingMaskIntoConstraints=NO;
-        [self.pending.view addSubview:indicator];
+        if (@available(iOS 13.0, *)) {
+            self.indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+            
+        } else {
+            self.indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        }
+        self.indicator.color = [UIColor blackColor];
+        self.indicator.translatesAutoresizingMaskIntoConstraints=NO;
+        [self.pending.view addSubview:self.indicator];
         
-        [indicator.centerYAnchor constraintEqualToAnchor:self.pending.view.centerYAnchor constant:15].active = true;
-        [indicator.centerXAnchor constraintEqualToAnchor:self.pending.view.centerXAnchor].active = true;
+        [self.indicator.centerYAnchor constraintEqualToAnchor:self.pending.view.centerYAnchor constant:15].active = true;
+        [self.indicator.centerXAnchor constraintEqualToAnchor:self.pending.view.centerXAnchor].active = true;
         
-        [indicator setUserInteractionEnabled:NO];
-        [indicator startAnimating];
+        [self.indicator setUserInteractionEnabled:NO];
+        [self.indicator startAnimating];
         [self presentViewController:self.pending animated:YES completion:nil];
     }
 }
@@ -134,7 +141,7 @@
     self.searchController.delegate = self;
     self.searchController.searchBar.delegate = self;
     self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.searchController.dimsBackgroundDuringPresentation = NO;
+    self.searchController.obscuresBackgroundDuringPresentation = NO;
     self.navigationItem.titleView = self.searchController.searchBar;
     self.definesPresentationContext = YES;
 }
@@ -260,7 +267,7 @@
             return [item.videoTitle containsString:searchText] || [item.videoSpeaker containsString:searchText];
         }];
         
-        self.dataSource = [[self.dataSource filteredArrayUsingPredicate:predicate] mutableCopy];
+        self.dataSource = [[self.searchResults filteredArrayUsingPredicate:predicate] mutableCopy];
     }
     else {
         self.dataSource = [self.searchResults mutableCopy];
