@@ -35,7 +35,6 @@
     } else {
         _videoImage.image = [UIImage imageWithData:item.videoImage];
     }
-    
     _speakerLabel.text = item.videoSpeaker;
     _speachTitleLabel.text = [self getSubstring:item.videoTitle];
     _videoDuration.text = [self getDuration:[NSMutableString stringWithString:item.videoDuration]];
@@ -43,15 +42,17 @@
 }
 
 -(void)initWithItem:(VideoItem *)item; {
-    
     _videoImage.image = item.image;
     _speakerLabel.text = item.videoSpeaker;
     _speachTitleLabel.text = [self getSubstring:item.videoTitle];
     _videoDuration.text = [self getDuration:[NSMutableString stringWithString:item.videoDuration]]; ;
 }
 
-- (NSString *)getDuration:(NSMutableString *)duration {
-    NSMutableString *newDuration = duration;
+- (NSString *)getDuration:(NSString *)duration {
+    NSMutableString *newDuration = [duration mutableCopy];
+    if ((duration.length < 8)) {
+        return @"";
+    }
     NSString *substring = [duration substringWithRange:NSMakeRange(0, 3)];
     if ([substring isEqualToString:@"00:"]) {
         [newDuration deleteCharactersInRange:NSMakeRange(0, 3)];

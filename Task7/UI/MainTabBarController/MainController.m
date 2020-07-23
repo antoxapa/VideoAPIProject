@@ -28,7 +28,7 @@
 - (void)setupViews {
     FirstTabVC *firstTab = [[FirstTabVC alloc]init];
     firstTab.view.backgroundColor = [UIColor whiteColor];
-    //    firstTab.title = @"";
+    
     UITabBarItem *infoTab = [[UITabBarItem alloc]initWithTitle:nil image:[UIImage imageNamed:@"home_unselected"] selectedImage:[UIImage imageNamed:@"home_selected"]];
     firstTab.tabBarItem = infoTab;
     

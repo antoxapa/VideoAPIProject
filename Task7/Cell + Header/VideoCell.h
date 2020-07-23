@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)initWithItem:(VideoItem *)item;
 -(void)initWithCoreItem:(Video *)item;
+
+- (NSString *)getSubstring:(NSString *)string;
+- (NSString *)getDuration:(NSMutableString *)duration;
+
 @end
 
 NS_ASSUME_NONNULL_END

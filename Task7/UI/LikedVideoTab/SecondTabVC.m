@@ -33,9 +33,6 @@
 - (NSManagedObjectContext *)viewContext {
     return ((AppDelegate *)UIApplication.sharedApplication.delegate).persistentContainer.viewContext;
 }
-- (NSManagedObjectContext *)newBackgroundContext {
-    return ((AppDelegate *)UIApplication.sharedApplication.delegate).persistentContainer.newBackgroundContext ;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -56,7 +53,7 @@
     [self.collectionView reloadData];
 }
 
-#pragma mark: - Search COntroller
+#pragma mark: - Search Controller
 - (void)setupSearchController {
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.searchResultsUpdater = self;

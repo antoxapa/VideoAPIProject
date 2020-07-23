@@ -57,9 +57,6 @@
 - (NSManagedObjectContext *)viewContext {
     return ((AppDelegate *)UIApplication.sharedApplication.delegate).persistentContainer.viewContext;
 }
-- (NSManagedObjectContext *)newBackgroundContext {
-    return ((AppDelegate *)UIApplication.sharedApplication.delegate).persistentContainer.newBackgroundContext ;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -72,7 +69,11 @@
         }
     }
     [self setupViews];
-    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (NSMutableArray <Video *>*)fetchVideoItems {
