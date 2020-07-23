@@ -10,6 +10,7 @@
 #import "VideoService.h"
 #import "XMLParser.h"
 #import "ParserProtocol.h"
+#import "RLURLSessionMock.h"
 
 @interface VideoServiceTest : XCTestCase
 
@@ -17,42 +18,45 @@
 @property (nonatomic, strong) XMLParser *parser;
 @property (nonatomic, strong) NSArray<VideoItem *> *videoArray;
 @property (nonatomic, strong) NSString *url;
-@property (nonatomic, strong) UIImage *downloadedImage;
+
+@property (nonatomic, strong) RLURLSessionMock *mockSession;
 
 @end
 
 @implementation VideoServiceTest
 
 - (void)setUp {
+    self.parser = [[XMLParser alloc]init];
     self.videoService = [[VideoService alloc]initWithParser: self.parser];
     self.videoArray = [NSArray array];
-    self.url = @"https://pi.tedcdn.com/r/pe.tedcdn.com/images/ted/e98a047229351dbda3f53fb5a70102f2daf48c4d_800x600.jpg?w=615&amp;h=461";
-    self.downloadedImage = [[UIImage alloc]init];
+    self.mockSession = [[RLURLSessionMock alloc]init];
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    self.videoService = nil;
 }
 
-//- (void)testLoad {
-//    XCTestExpectation *expectation = [self expectationWithDescription:@"load_expectation"];
-//    [self.videoService loadVideo:^(NSArray<VideoItem *> *array, NSError *error) {
-//        self.videoArray = array;
-//        [expectation fulfill];
-//    }];
-//    [self waitForExpectations:@[expectation] timeout:10];
-//    XCTAssertTrue(self.videoArray.count > 0);
-//}
-
-- (void)testDownloadImage {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"download_expectation"];
-    [self.videoService downloadImgeForURL:self.url completion:^(UIImage * image, NSError * error) {
-        self.downloadedImage = image;
-        [expectation fulfill];
+- (void)testLoad {
+    NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"Mock_XML" ofType:nil];
+    NSData *mockData = [[NSData alloc]initWithContentsOfFile:filePath];
+    self.mockSession.data = mockData;
+    self.videoService.session = self.mockSession;
+    __block NSData* resultData = nil;
+    
+    [self.videoService loadDataWithURL:@"random url" completion:^(NSData * data, NSError * error) {
+        resultData = data;
     }];
-    [self waitForExpectations:@[expectation] timeout:1];
-    XCTAssertNotNil(self.downloadedImage);
-//    xcassert
+    XCTAssertEqual(mockData, resultData);
 }
 
+- (void)testParsing {
+    NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"Mock_XML" ofType:nil];
+    NSData *mockData = [[NSData alloc]initWithContentsOfFile:filePath];
+    self.mockSession.data = mockData;
+    self.videoService.session = self.mockSession;
+    
+    [self.videoService parseData:^(NSArray<VideoItem *> * data, NSError * error) {
+        XCTAssertTrue(data.count == 2);
+    }];
+}
 @end

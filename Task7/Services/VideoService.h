@@ -17,8 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithParser:(id<ParserProtocol>)parser;
 
-- (void)loadVideo:(void(^)(NSArray<VideoItem *> *, NSError *))completion;
-- (void)downloadImgeForURL:(NSString *)url completion:(void(^)(UIImage *, NSError *))completion;
+@property (nonatomic, strong) NSURLSession *session;
+
+- (void)parseData:(void(^)(NSArray<VideoItem *> *, NSError *))completion;
+- (void)loadDataWithURL:(NSString *)url completion:(void(^)(NSData *, NSError *))completion;
 - (void)stopDownload;
 
 @end

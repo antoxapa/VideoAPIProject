@@ -25,11 +25,12 @@
 		063F05A624C417EF00C8A6B7 /* VideoInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05A524C417EF00C8A6B7 /* VideoInfoVC.m */; };
 		063F05AF24C5A8FB00C8A6B7 /* Video+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05AD24C5A8FB00C8A6B7 /* Video+CoreDataClass.m */; };
 		063F05B024C5A8FB00C8A6B7 /* Video+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 063F05AE24C5A8FB00C8A6B7 /* Video+CoreDataProperties.m */; };
-		06AF8D0E24C8932F0053B543 /* XMLParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D0D24C8932F0053B543 /* XMLParserTest.m */; };
 		06AF8D1024C895010053B543 /* VideoServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D0F24C895010053B543 /* VideoServiceTest.m */; };
 		06AF8D1324C8B1900053B543 /* RLURLSessionMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D1224C8B1900053B543 /* RLURLSessionMock.m */; };
 		06AF8D1624C8B36D0053B543 /* RLURLSessionDataTaskMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */; };
 		06AF8D1824C8CDE80053B543 /* VideoItemTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D1724C8CDE80053B543 /* VideoItemTest.m */; };
+		06AF8D1C24C97CB50053B543 /* Mock_XML in Resources */ = {isa = PBXBuildFile; fileRef = 06AF8D1B24C97CB50053B543 /* Mock_XML */; };
+		06AF8D1E24C97D640053B543 /* XMLParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06AF8D0D24C8932F0053B543 /* XMLParserTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		06AF8D1424C8B36D0053B543 /* RLURLSessionDataTaskMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLURLSessionDataTaskMock.h; sourceTree = "<group>"; };
 		06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLURLSessionDataTaskMock.m; sourceTree = "<group>"; };
 		06AF8D1724C8CDE80053B543 /* VideoItemTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoItemTest.m; sourceTree = "<group>"; };
+		06AF8D1B24C97CB50053B543 /* Mock_XML */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Mock_XML; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,13 +151,11 @@
 			isa = PBXGroup;
 			children = (
 				063F04F224C0F6DD00C8A6B7 /* Task7Tests.m */,
-				06AF8D1724C8CDE80053B543 /* VideoItemTest.m */,
 				06AF8D0D24C8932F0053B543 /* XMLParserTest.m */,
+				06AF8D1724C8CDE80053B543 /* VideoItemTest.m */,
 				06AF8D0F24C895010053B543 /* VideoServiceTest.m */,
-				06AF8D1124C8B1900053B543 /* RLURLSessionMock.h */,
-				06AF8D1224C8B1900053B543 /* RLURLSessionMock.m */,
-				06AF8D1424C8B36D0053B543 /* RLURLSessionDataTaskMock.h */,
-				06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */,
+				06AF8D1F24C9A5A80053B543 /* VideoServiceMock */,
+				06AF8D1B24C97CB50053B543 /* Mock_XML */,
 				063F04F424C0F6DD00C8A6B7 /* Info.plist */,
 			);
 			path = Task7Tests;
@@ -259,6 +259,17 @@
 			path = videoDetailVC;
 			sourceTree = "<group>";
 		};
+		06AF8D1F24C9A5A80053B543 /* VideoServiceMock */ = {
+			isa = PBXGroup;
+			children = (
+				06AF8D1124C8B1900053B543 /* RLURLSessionMock.h */,
+				06AF8D1224C8B1900053B543 /* RLURLSessionMock.m */,
+				06AF8D1424C8B36D0053B543 /* RLURLSessionDataTaskMock.h */,
+				06AF8D1524C8B36D0053B543 /* RLURLSessionDataTaskMock.m */,
+			);
+			path = VideoServiceMock;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -348,6 +359,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06AF8D1C24C97CB50053B543 /* Mock_XML in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +394,7 @@
 			files = (
 				06AF8D1824C8CDE80053B543 /* VideoItemTest.m in Sources */,
 				06AF8D1324C8B1900053B543 /* RLURLSessionMock.m in Sources */,
-				06AF8D0E24C8932F0053B543 /* XMLParserTest.m in Sources */,
+				06AF8D1E24C97D640053B543 /* XMLParserTest.m in Sources */,
 				06AF8D1024C895010053B543 /* VideoServiceTest.m in Sources */,
 				06AF8D1624C8B36D0053B543 /* RLURLSessionDataTaskMock.m in Sources */,
 				063F04F324C0F6DD00C8A6B7 /* Task7Tests.m in Sources */,

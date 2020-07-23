@@ -218,8 +218,9 @@
 - (void)loadImageForURL:(NSString *)url {
     __weak typeof(self) weakSelf = self;
     self.videoService = [[VideoService alloc]initWithParser: [XMLParser new]];
-    [self.videoService downloadImgeForURL:url completion:^(UIImage * image, NSError * error) {
+    [self.videoService loadDataWithURL:url completion:^(NSData * data, NSError * error) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            UIImage *image = [UIImage imageWithData:data];
             weakSelf.videoImage = image;
             weakSelf.videoImageView.image = weakSelf.videoImage;
             [weakSelf.playVideoButton setHidden:NO];

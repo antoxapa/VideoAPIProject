@@ -68,7 +68,7 @@
 
 - (void)startLoading {
     __weak typeof (self) weakSelf = self;
-    [self.videoService loadVideo:^(NSArray<VideoItem *> *video, NSError *error) {
+    [self.videoService parseData:^(NSArray<VideoItem *> *video, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             
             if (error) {
@@ -151,13 +151,14 @@
     if (item.image) {
         return;
     }
-    [self.videoService downloadImgeForURL:imageURL completion:^(UIImage * image, NSError * error) {
+    [self.videoService loadDataWithURL: imageURL completion:^(NSData * data, NSError * error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error) {
                 return;
             }
             if (index >= weakSelf.dataSource.count) { return; }
             if ([weakSelf.dataSource[index].videoID isEqualToNumber:itemID]) {
+                UIImage *image = [UIImage imageWithData:data];
                 weakSelf.dataSource[index].image = image;
                 if ([weakSelf.searchResults containsObject:item]) {
                     [weakSelf.searchResults replaceObjectAtIndex:[weakSelf.searchResults indexOfObject:item]  withObject:item];

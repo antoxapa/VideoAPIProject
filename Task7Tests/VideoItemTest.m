@@ -32,14 +32,13 @@
 }
 
 - (void)testInit {
-        XCTAssertTrue([self.item.videoTitle  isEqual: @"1"]);
-        XCTAssertTrue([self.item.videoLink  isEqual: @"2"]);
-        XCTAssertTrue([self.item.videoDescription isEqual: @"3"]);
-        XCTAssertTrue([self.item.videoImageURL  isEqual: @"4"]);
-        XCTAssertTrue([self.item.videoDuration  isEqual: @"5"]);
-        XCTAssertTrue([self.item.videoSpeaker  isEqual: @"credit"]);
-        XCTAssertTrue([self.item.videoStreamLink  isEqual: @"content"]);
+    XCTAssertTrue([self.item.videoTitle  isEqual: @"1"]);
+    XCTAssertTrue([self.item.videoLink  isEqual: @"2"]);
+    XCTAssertTrue([self.item.videoDescription isEqual: @"3"]);
+    XCTAssertTrue([self.item.videoImageURL  isEqual: @"4"]);
+    XCTAssertTrue([self.item.videoDuration  isEqual: @"5"]);
+    XCTAssertTrue([self.item.videoSpeaker  isEqual: @"credit"]);
+    XCTAssertTrue([self.item.videoStreamLink  isEqual: @"content"]);
 }
-
 
 @end

@@ -14,10 +14,11 @@
 
 @interface VideoService ()
 
-@property (nonatomic, strong) NSURLSession *session;
+
 @property (nonatomic, strong) id<ParserProtocol> parser;
 
-@property (copy, nonatomic) void (^completion)(UIImage *, NSError *);
+@property (copy, nonatomic) void (^completion)(NSData *, NSError *);
+
 @end
 
 @implementation VideoService
@@ -38,24 +39,18 @@
     return _session;
 }
 
-- (void)loadVideo:(void(^)(NSArray<VideoItem *> *, NSError *))completion {
-    NSURL *url = [NSURL URLWithString:@"https://www.ted.com/themes/rss/id"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    request.HTTPMethod = @"POST";
-    
-    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:request
-                                                     completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
+- (void)parseData:(void(^)(NSArray<VideoItem *> *, NSError *))completion {
+    NSString *url = @"https://www.ted.com/themes/rss/id";
+    [self loadDataWithURL:url completion:^(NSData *data, NSError *error) {
+        if (data) {
+            [self.parser parseVideo:data completion:completion];
+        } else {
             completion(nil, error);
-            return;
         }
-        [self.parser parseVideo:data completion:completion];
     }];
-    [dataTask resume];
 }
 
-- (void)downloadImgeForURL:(NSString *)url completion:(void(^)(UIImage *, NSError *))completion {
-    
+- (void)loadDataWithURL:(NSString *)url completion:(void(^)(NSData *, NSError *))completion {
     NSURL *newURL = [NSURL URLWithString:url];
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithURL:newURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
@@ -63,11 +58,10 @@
             return;
         }
         if (!data) { return; }
-        UIImage *image = [UIImage imageWithData:data];
         if (completion) {
             self.completion = completion;
         }
-        completion(image, nil);
+        completion(data, nil);
     }];
     [dataTask resume];
 }

@@ -17,4 +17,8 @@
     }
     return self;
 }
+
+- (void)resume {
+    self.sessiongBlock();
+}
 @end

@@ -14,7 +14,7 @@ typedef void(^CompletionHandler)(NSData* _Nullable data, NSURLResponse* _Nullabl
 
 @interface RLURLSessionMock : NSURLSession
 
-@property (nonatomic, strong) NSData *ata;
+@property (nonatomic, strong) NSData *data;
 @property (nonatomic, strong) NSError *error;
 
 @end

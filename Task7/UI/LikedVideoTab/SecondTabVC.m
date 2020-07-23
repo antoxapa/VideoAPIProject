@@ -77,11 +77,11 @@
     if (item.videoImage) {
         return;
     }
-    [self.videoService downloadImgeForURL:imageURL completion:^(UIImage * image, NSError * error) {
+    [self.videoService loadDataWithURL:imageURL completion:^(NSData * data, NSError * error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (index >= weakSelf.coreVideoItems.count) { return; }
             if ([weakSelf.coreVideoItems[index].videoLink isEqualToString:item.videoLink]) {
-                weakSelf.coreVideoItems[index].videoImage = UIImagePNGRepresentation(image);;
+                weakSelf.coreVideoItems[index].videoImage = UIImagePNGRepresentation([UIImage imageWithData:data]);;
                 if ([weakSelf.searchResults containsObject:item]) {
                     [weakSelf.searchResults replaceObjectAtIndex:[weakSelf.searchResults indexOfObject:item]  withObject:item];
                 }
@@ -113,12 +113,12 @@
     [self.collectionView setContentInset:UIEdgeInsetsMake(0, 20, 0, 20)];
     self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     
-        [NSLayoutConstraint activateConstraints:@[
-            [self.collectionView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
-            [self.collectionView.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
-            [self.collectionView.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
-            [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
-        ]];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.collectionView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+        [self.collectionView.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
+        [self.collectionView.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
+        [self.collectionView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+    ]];
     
     self.flowLayout.itemSize = CGSizeMake(self.collectionView.bounds.size.width - 40, 100);
     [self.flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];

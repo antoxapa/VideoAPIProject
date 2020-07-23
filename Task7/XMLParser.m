@@ -17,8 +17,6 @@
 @property (nonatomic, strong) NSMutableDictionary *parsingDictionary;
 @property (nonatomic, strong) NSMutableString *parsingString;
 
-//@property (nonatomic, strong) NSMutableString *parsingString;
-
 @end
 
 @implementation XMLParser

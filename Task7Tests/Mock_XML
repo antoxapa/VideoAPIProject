@@ -1,0 +1,44 @@
+<items>
+    <item>
+        <title>Great cars are great art | Chris Bangle</title>
+        <link>https://www.ted.com/talks/chris_bangle_great_cars_are_great_art</link>
+        <pubDate>Thu, 05 Apr 2007 00:11:00 +0000</pubDate>
+        <description><![CDATA[American designer Chris Bangle explains his philosophy that car design is an art form in its own right, with an entertaining -- and ultimately moving -- account of the BMW Group's Deep Blue project, intended to create the SUV of the future.]]></description>
+        <guid isPermaLink="false">en.video.talk.ted.com:5:1</guid>
+        <itunes:image url="https://pi.tedcdn.com/r/pe.tedcdn.com/images/ted/e98a047229351dbda3f53fb5a70102f2daf48c4d_800x600.jpg?w=615&amp;h=461" />
+        <itunes:duration>00:20:04</itunes:duration>
+        <enclosure url="https://download.ted.com/talks/ChrisBangle_2002.mp4" length="68081199" type="video/mp4" />
+        <media:group>
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-64k.mp4" duration="1204" fileSize="9807568" type="video/mp4" bitrate="64" />
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-180k.mp4" duration="1204" fileSize="27237891" type="video/mp4" bitrate="180" />
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-320k.mp4" duration="1204" fileSize="48164754" type="video/mp4" bitrate="320" />
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-450k.mp4" duration="1204" fileSize="67671538" type="video/mp4" bitrate="450" />
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-600k.mp4" duration="1204" fileSize="90219359" type="video/mp4" bitrate="600" />
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-950k.mp4" duration="1204" fileSize="139419909" type="video/mp4" bitrate="950" />
+            <media:content url="https://download.ted.com/talks/ChrisBangle_2002-1500k.mp4" duration="1204" fileSize="218041394" type="video/mp4" bitrate="1500" />
+            <media:credit role="speaker">Chris Bangle</media:credit>
+            <media:thumbnail url="https://pi.tedcdn.com/r/pe.tedcdn.com/images/ted/e98a047229351dbda3f53fb5a70102f2daf48c4d_800x600.jpg?w=132&amp;h=99" width="132" height="99"/>
+        </media:group>
+    </item>
+    <item>
+        <title>Meet the future of cancer research | Eva Vertes</title>
+        <link>https://www.ted.com/talks/eva_vertes_meet_the_future_of_cancer_research</link>
+        <pubDate>Mon, 02 Oct 2006 00:11:00 +0000</pubDate>
+        <description><![CDATA[Eva Vertes -- only 19 when she gave this talk -- discusses her journey toward studying medicine and her drive to understand the roots of cancer and Alzheimer’s.]]></description>
+        <guid isPermaLink="false">en.video.talk.ted.com:12:1</guid>
+        <itunes:image url="https://pi.tedcdn.com/r/pe.tedcdn.com/images/ted/114baac7e5cdaf671cba918af0f905261914794f_800x600.jpg?w=615&amp;h=461" />
+        <itunes:duration>00:18:49</itunes:duration>
+        <enclosure url="https://download.ted.com/talks/EvaVertes_2005.mp4" length="64187447" type="video/mp4" />
+        <media:group>
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-64k.mp4" duration="1129" fileSize="9258501" type="video/mp4" bitrate="64" />
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-180k.mp4" duration="1129" fileSize="25727857" type="video/mp4" bitrate="180" />
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-320k.mp4" duration="1129" fileSize="45513966" type="video/mp4" bitrate="320" />
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-450k.mp4" duration="1129" fileSize="64297993" type="video/mp4" bitrate="450" />
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-600k.mp4" duration="1129" fileSize="85480700" type="video/mp4" bitrate="600" />
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-950k.mp4" duration="1129" fileSize="131401503" type="video/mp4" bitrate="950" />
+            <media:content url="https://download.ted.com/talks/EvaVertes_2005-1500k.mp4" duration="1129" fileSize="205087594" type="video/mp4" bitrate="1500" />
+            <media:credit role="speaker">Eva Vertes</media:credit>
+            <media:thumbnail url="https://pi.tedcdn.com/r/pe.tedcdn.com/images/ted/114baac7e5cdaf671cba918af0f905261914794f_800x600.jpg?w=132&amp;h=99" width="132" height="99"/>
+        </media:group>
+    </item>
+</items>

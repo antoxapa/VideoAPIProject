@@ -8,25 +8,37 @@
 
 #import <XCTest/XCTest.h>
 #import "VideoItem.h"
+#import "XMLParser.h"
 
 @interface XMLParserTest : XCTestCase
 @property (nonatomic, copy) void (^completion)(NSArray<VideoItem *> *, NSError *);
+@property (nonatomic, strong) NSData *data;
+@property (nonatomic, strong) NSError *error;
+@property (nonatomic, strong) XMLParser *parser;
 
 @end
 
 @implementation XMLParserTest
 
 - (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+   
+//    //    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"data" ofType:@".xml"];
+//    NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"Mock_XML" ofType:nil];
+//    self.data = [NSData dataWithContentsOfFile:filePath];
+//    self.parser = [[XMLParser alloc]init];
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
 }
 
-- (void)testCompletion {
-//    XCTAssertNotNil(self.completion);
+- (void)testParseVideo {
+//    XCTestExpectation *expectation = [self expectationWithDescription:@"parse_expectation"];
+//    [self.parser parseVideo:self.data completion:self.completion];
+//    self.completion = ^(NSArray<VideoItem *> *item, NSError *error) {
+//        [expectation fulfill];
+//    };
+//    [self waitForExpectations:@[expectation] timeout:5];
 }
-
 
 @end
